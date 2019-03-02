@@ -2,24 +2,20 @@ package main
 
 import (
 	"context"
-	"os"
 
-	"github.com/shomali11/slacker"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/evandroflores/udpong/cmd"
+	"github.com/evandroflores/udpong/slack"
 )
 
 func main() {
-	token := os.Getenv("PONG_TOKEN")
-	if token == "" {
-		log.Fatal("Bot User OAuth Access Token not found. Set PONG_TOKEN to continue.")
-	}
-
-	bot := slacker.NewClient(token)
-
+	log.SetLevel(log.DebugLevel)
 	ctx, cancel := context.WithCancel(context.Background())
 
+	cmd.LoadCommands()
 	defer cancel()
-	err := bot.Listen(ctx)
+	err := slack.Listen(ctx)
 	if err != nil {
 		log.Fatal("Could not start the bot", err)
 	}
