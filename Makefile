@@ -19,4 +19,5 @@ ifeq "$(wildcard Gopkg.toml)" ""
 	@echo "Initializing dep..."
 	@dep init
 endif
+	@dep ensure
 	@dep status
