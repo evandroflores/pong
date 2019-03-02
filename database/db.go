@@ -23,6 +23,7 @@ func init() {
 	}
 
 	Connection, err = gorm.Open("postgres", dbStringConnection)
+	Connection.LogMode(true)
 
 	if err != nil {
 		log.Fatalf("Could not create a database connection - %s", err)

@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/evandroflores/udpong/slack"
+	"github.com/evandroflores/udpong/model"
 	"github.com/shomali11/slacker"
 )
 
@@ -14,10 +14,10 @@ func init() {
 func beats(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
-	winnerID := request.StringParam("winner", "")
-	loserID := request.StringParam("loser", "")
+	winnerID := cleanID(request.StringParam("winner", ""))
+	loserID := cleanID(request.StringParam("loser", ""))
 
-	winner, _ := slack.Client.GetUserInfo(cleanID(winnerID))
-	loser, _ := slack.Client.GetUserInfo(cleanID(loserID))
-	response.Reply(fmt.Sprintf("%s x %s", winner.RealName, loser.RealName))
+	winner, _ := model.GetOrCreatePlayer(winnerID)
+	loser, _ := model.GetOrCreatePlayer(loserID)
+	response.Reply(fmt.Sprintf("%s x %s", winner.Name, loser.Name))
 }
