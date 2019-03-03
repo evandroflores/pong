@@ -81,3 +81,21 @@ func (player *Player) ingestData() {
 	player.Name = slackUser.RealName
 	player.Image = slackUser.Profile.Image48
 }
+
+// GetPlayers list a number of players limited by the given threshhold
+func GetPlayers(limit int) []Player {
+	results := []Player{}
+
+	database.Connection.Find(&results).Order("points, created_at").Limit(limit)
+
+	return results
+}
+
+// GetAllPlayers list all players
+func GetAllPlayers() []Player {
+	results := []Player{}
+
+	database.Connection.Find(&results).Order("points, created_at")
+
+	return results
+}
