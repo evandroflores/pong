@@ -16,6 +16,11 @@ func me(request slacker.Request, response slacker.ResponseWriter) {
 
 	userID := cleanID(request.Event().User)
 
-	user, _ := model.GetOrCreatePlayer(userID)
+	user, err := model.GetOrCreatePlayer(userID)
+	if err != nil {
+		response.ReportError(err)
+		return
+	}
+
 	response.Reply(fmt.Sprintf("You have %0.f points", user.Points))
 }

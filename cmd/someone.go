@@ -16,6 +16,16 @@ func someone(request slacker.Request, response slacker.ResponseWriter) {
 
 	userID := cleanID(request.StringParam("someone", ""))
 
-	user, _ := model.GetOrCreatePlayer(userID)
+	if !isUser(userID) {
+		response.ReportError(fmt.Errorf("Not a User"))
+		return
+	}
+
+	user, err := model.GetOrCreatePlayer(userID)
+	if err != nil {
+		response.ReportError(err)
+		return
+	}
+
 	response.Reply(fmt.Sprintf("%s has %0.f points", user.Name, user.Points))
 }

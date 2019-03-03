@@ -18,9 +18,26 @@ func beats(request slacker.Request, response slacker.ResponseWriter) {
 	winnerID := cleanID(request.StringParam("winner", ""))
 	loserID := cleanID(request.StringParam("loser", ""))
 
-	winner, _ := model.GetOrCreatePlayer(winnerID)
-	loser, _ := model.GetOrCreatePlayer(loserID)
+	if !isUser(winnerID) {
+		response.ReportError(fmt.Errorf("The given winner is not a User"))
+		return
+	}
 
+	if !isUser(loserID) {
+		response.ReportError(fmt.Errorf("The given loser is not a User"))
+		return
+	}
+
+	winner, errW := model.GetOrCreatePlayer(winnerID)
+	if errW != nil {
+		response.ReportError(errW)
+		return
+	}
+	loser, errL := model.GetOrCreatePlayer(loserID)
+	if errL != nil {
+		response.ReportError(errL)
+		return
+	}
 	winner.Points, loser.Points = elo.Calc(winner.Points, loser.Points)
 	winner.Update()
 	loser.Update()

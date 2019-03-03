@@ -36,7 +36,6 @@ func GetPlayer(slackID string) (Player, error) {
 // Add adds a new player.
 func (player Player) Add() {
 	player.ingestData()
-	fmt.Printf("Add:%s", player.Name)
 	database.Connection.Create(&player)
 }
 

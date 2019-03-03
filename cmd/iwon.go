@@ -9,14 +9,19 @@ import (
 )
 
 func init() {
-	Register("I won <loser>", "Calculate and rank the given Winner and Loser.", iwon)
+	Register("I won <loser>", "Calculate and rank the given Winner and Loser.", iWon)
 }
 
-func iwon(request slacker.Request, response slacker.ResponseWriter) {
+func iWon(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
 	winnerID := cleanID(request.Event().User)
 	loserID := cleanID(request.StringParam("loser", ""))
+
+	if !isUser(loserID) {
+		response.ReportError(fmt.Errorf("The given loser is not a User"))
+		return
+	}
 
 	winner, _ := model.GetOrCreatePlayer(winnerID)
 	loser, _ := model.GetOrCreatePlayer(loserID)
