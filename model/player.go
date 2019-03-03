@@ -47,6 +47,7 @@ func GetOrCreatePlayer(slackID string) (Player, error) {
 	}
 	if player == (Player{}) {
 		Player{SlackID: slackID}.Add()
+		player, _ = GetPlayer(slackID)
 	}
 	return player, nil
 }
