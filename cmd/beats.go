@@ -9,14 +9,14 @@ import (
 )
 
 func init() {
-	Register("<winner> beats <loser>", "Records points for a given Winner and Loser.", beats)
+	Register("<@winner> beats <@loser>", "Records points for a given Winner and Loser.", beats)
 }
 
 func beats(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
-	winnerID := cleanID(request.StringParam("winner", ""))
-	loserID := cleanID(request.StringParam("loser", ""))
+	winnerID := cleanID(request.StringParam("@winner", ""))
+	loserID := cleanID(request.StringParam("@loser", ""))
 
 	if !isUser(winnerID) {
 		response.ReportError(fmt.Errorf("The given winner is not a User"))

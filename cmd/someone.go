@@ -8,13 +8,13 @@ import (
 )
 
 func init() {
-	Register("show <someone>", "Show someone's points.", someone)
+	Register("show <@someone>", "Show someone's points.", someone)
 }
 
 func someone(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
-	userID := cleanID(request.StringParam("someone", ""))
+	userID := cleanID(request.StringParam("@someone", ""))
 
 	if !isUser(userID) {
 		response.ReportError(fmt.Errorf("Not a User"))

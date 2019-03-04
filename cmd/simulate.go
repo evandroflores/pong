@@ -9,14 +9,14 @@ import (
 )
 
 func init() {
-	Register("simulate <playerA> vs <playerB>", "Simulates a game result", simulate)
+	Register("simulate <@playerA> vs <@playerB>", "Simulates a game result", simulate)
 }
 
 func simulate(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
-	playerAID := cleanID(request.StringParam("playerA", ""))
-	playerBID := cleanID(request.StringParam("playerB", ""))
+	playerAID := cleanID(request.StringParam("@playerA", ""))
+	playerBID := cleanID(request.StringParam("@playerB", ""))
 
 	if !isUser(playerAID) {
 		response.ReportError(fmt.Errorf("The given winner is not a User"))

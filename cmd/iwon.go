@@ -9,14 +9,14 @@ import (
 )
 
 func init() {
-	Register("I won <loser>", "Update your win and the loser points", iWon)
+	Register("I won <@loser>", "Update your win and the loser points", iWon)
 }
 
 func iWon(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
 	winnerID := cleanID(request.Event().User)
-	loserID := cleanID(request.StringParam("loser", ""))
+	loserID := cleanID(request.StringParam("@loser", ""))
 
 	if !isUser(loserID) {
 		response.ReportError(fmt.Errorf("The given loser is not a User"))
