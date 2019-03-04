@@ -3,8 +3,8 @@ package model
 import (
 	"fmt"
 
-	"github.com/evandroflores/udpong/database"
-	"github.com/evandroflores/udpong/slack"
+	"github.com/evandroflores/pong/database"
+	"github.com/evandroflores/pong/slack"
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/evandroflores/udpong/slack"
+	"github.com/evandroflores/pong/slack"
 	"github.com/shomali11/slacker"
 	log "github.com/sirupsen/logrus"
 )

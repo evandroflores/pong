@@ -1,1 +1,1 @@
-# Udemy ping pong leaderboard
+# Ping pong leader board

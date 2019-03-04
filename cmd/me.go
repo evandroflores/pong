@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/evandroflores/udpong/model"
+	"github.com/evandroflores/pong/model"
 	"github.com/shomali11/slacker"
 )
 
