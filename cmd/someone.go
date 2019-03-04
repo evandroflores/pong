@@ -27,5 +27,5 @@ func someone(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	response.Reply(fmt.Sprintf("%s has %0.f points", user.Name, user.Points))
+	response.Reply(fmt.Sprintf("*%s* has %0.f points", user.Name, user.Points))
 }

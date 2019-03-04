@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	Register("<winner> beats <loser>", "Calculate and rank the given Winner and Loser.", beats)
+	Register("<winner> beats <loser>", "Records points for a given Winner and Loser.", beats)
 }
 
 func beats(request slacker.Request, response slacker.ResponseWriter) {
@@ -25,6 +25,11 @@ func beats(request slacker.Request, response slacker.ResponseWriter) {
 
 	if !isUser(loserID) {
 		response.ReportError(fmt.Errorf("The given loser is not a User"))
+		return
+	}
+
+	if winnerID == loserID {
+		response.ReportError(fmt.Errorf("Same player? Go find someone to play"))
 		return
 	}
 

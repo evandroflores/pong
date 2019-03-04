@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	Register("I won <loser>", "Calculate and rank the given Winner and Loser.", iWon)
+	Register("I won <loser>", "Update your win and the loser points", iWon)
 }
 
 func iWon(request slacker.Request, response slacker.ResponseWriter) {
@@ -20,6 +20,11 @@ func iWon(request slacker.Request, response slacker.ResponseWriter) {
 
 	if !isUser(loserID) {
 		response.ReportError(fmt.Errorf("The given loser is not a User"))
+		return
+	}
+
+	if winnerID == loserID {
+		response.ReportError(fmt.Errorf("Same player? Go find someone to play"))
 		return
 	}
 
