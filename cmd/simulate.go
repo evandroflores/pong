@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	Register("simulate <playerA> vs <playerB>", "Calculate and rank the given Winner and Loser.", simulate)
+	Register("simulate <playerA> vs <playerB>", "Simulates a game result", simulate)
 }
 
 func simulate(request slacker.Request, response slacker.ResponseWriter) {
