@@ -80,6 +80,7 @@ func (player *Player) ingestData() {
 	}
 	player.Name = slackUser.RealName
 	player.Image = slackUser.Profile.Image48
+	player.TeamID = slackUser.TeamID
 }
 
 // GetPlayers list a number of players limited by the given threshhold
