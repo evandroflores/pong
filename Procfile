@@ -1,1 +1,1 @@
-worker: bin/pong
+worker: pong
