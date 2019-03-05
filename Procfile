@@ -1,1 +1,1 @@
-web: pong
+worker: bin/pong

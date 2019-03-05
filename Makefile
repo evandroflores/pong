@@ -16,6 +16,9 @@ endif
 run: check-env
 	@go run main.go
 
+build: check-env
+	@go build -o bin/pong
+
 check-dep:
 ifeq "$(shell command -v dep)" ""
 	@echo "dep is not available please install https://golang.github.io/dep/"

@@ -17,5 +17,5 @@
 [metadata.heroku]
   root-package = "github.com/evandroflores/pong"
   go-version = "1.12"
-  ensure="true"
+  ensure = "false"
   install = [ "./..." ]
