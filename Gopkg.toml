@@ -13,3 +13,8 @@
 [prune]
   go-tests = true
   unused-packages = true
+
+[metadata.heroku]
+  root-package = "github.com/evandroflores/pong"
+  go-version = "1.12"
+  ensure="true"
