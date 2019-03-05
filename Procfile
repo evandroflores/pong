@@ -1,1 +1,1 @@
-worker: make run
+web: pong
