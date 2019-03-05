@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	Register("I won <@loser>", "Update your win and the loser points", iWon)
+	Register("I won <@loser>", "Update your win and the loser points.", iWon)
 }
 
 func iWon(request slacker.Request, response slacker.ResponseWriter) {
