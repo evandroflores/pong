@@ -1,1 +1,2 @@
-worker: pong
+web: pong
+
