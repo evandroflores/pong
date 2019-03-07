@@ -15,13 +15,15 @@ func someone(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
 	userID := cleanID(request.StringParam("@someone", ""))
+	teamID := cleanID(request.Event().Team)
+	channelID := cleanID(request.Event().Channel)
 
 	if !isUser(userID) {
 		response.ReportError(fmt.Errorf("Not a User"))
 		return
 	}
 
-	user, err := model.GetOrCreatePlayer(userID)
+	user, err := model.GetOrCreatePlayer(teamID, channelID, userID)
 	if err != nil {
 		response.ReportError(err)
 		return

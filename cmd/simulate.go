@@ -28,12 +28,15 @@ func simulate(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	playerA, errA := model.GetOrCreatePlayer(playerAID)
+	teamID := cleanID(request.Event().Team)
+	channelID := cleanID(request.Event().Channel)
+
+	playerA, errA := model.GetOrCreatePlayer(teamID, channelID, playerAID)
 	if errA != nil {
 		response.ReportError(errA)
 		return
 	}
-	playerB, errB := model.GetOrCreatePlayer(playerBID)
+	playerB, errB := model.GetOrCreatePlayer(teamID, channelID, playerBID)
 	if errB != nil {
 		response.ReportError(errB)
 		return

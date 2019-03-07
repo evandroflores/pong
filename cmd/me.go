@@ -15,8 +15,10 @@ func me(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
 	userID := cleanID(request.Event().User)
+	teamID := cleanID(request.Event().Team)
+	channelID := cleanID(request.Event().Channel)
 
-	user, err := model.GetOrCreatePlayer(userID)
+	user, err := model.GetOrCreatePlayer(teamID, channelID, userID)
 	if err != nil {
 		response.ReportError(err)
 		return

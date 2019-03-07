@@ -28,8 +28,11 @@ func iLost(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	winner, _ := model.GetOrCreatePlayer(winnerID)
-	loser, _ := model.GetOrCreatePlayer(loserID)
+	teamID := cleanID(request.Event().Team)
+	channelID := cleanID(request.Event().Channel)
+
+	winner, _ := model.GetOrCreatePlayer(teamID, channelID, winnerID)
+	loser, _ := model.GetOrCreatePlayer(teamID, channelID, loserID)
 
 	winner.Points, loser.Points = elo.Calc(winner.Points, loser.Points)
 	winner.Update()

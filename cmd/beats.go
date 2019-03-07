@@ -33,12 +33,15 @@ func beats(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	winner, errW := model.GetOrCreatePlayer(winnerID)
+	teamID := cleanID(request.Event().Team)
+	channelID := cleanID(request.Event().Channel)
+
+	winner, errW := model.GetOrCreatePlayer(teamID, channelID, winnerID)
 	if errW != nil {
 		response.ReportError(errW)
 		return
 	}
-	loser, errL := model.GetOrCreatePlayer(loserID)
+	loser, errL := model.GetOrCreatePlayer(teamID, channelID, loserID)
 	if errL != nil {
 		response.ReportError(errL)
 		return
