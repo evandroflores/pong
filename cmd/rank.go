@@ -9,20 +9,10 @@ import (
 )
 
 func init() {
-	Register("rank", "Show the top 10 rank.", top10)
-	Register("rank all", "Show the entire rank.", all)
+	Register("rank", "Show the entire rank.", rank)
 }
 
-func top10(request slacker.Request, response slacker.ResponseWriter) {
-	response.Typing()
-
-	teamID := cleanID(request.Event().Team)
-	channelID := cleanID(request.Event().Channel)
-
-	response.Reply(makeRank(model.GetPlayers(teamID, channelID, 10)))
-}
-
-func all(request slacker.Request, response slacker.ResponseWriter) {
+func rank(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
 	teamID := cleanID(request.Event().Team)
