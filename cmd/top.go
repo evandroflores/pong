@@ -6,14 +6,15 @@ import (
 )
 
 func init() {
-	Register("top", "Show the top 10.", top10)
+	Register("top <limit>", "Show the top N players (default 10).", top)
 }
 
-func top10(request slacker.Request, response slacker.ResponseWriter) {
+func top(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
 	teamID := cleanID(request.Event().Team)
 	channelID := cleanID(request.Event().Channel)
+	limit := request.IntegerParam("limit", 10)
 
-	response.Reply(makeRank(model.GetPlayers(teamID, channelID, 10)))
+	response.Reply(makeRank(model.GetPlayers(teamID, channelID, limit)))
 }
