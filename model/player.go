@@ -95,10 +95,11 @@ func (player *Player) ingestData() {
 func GetPlayers(teamID string, channelID string, limit int) []Player {
 	results := []Player{}
 
-	database.Connection.Find(&results).
+	database.Connection.
 		Where(&Player{TeamID: teamID, ChannelID: channelID}).
-		Order("points, created_at").
-		Limit(limit)
+		Order("points desc, created_at").
+		Limit(limit).
+		Find(&results)
 
 	return results
 }
@@ -107,9 +108,10 @@ func GetPlayers(teamID string, channelID string, limit int) []Player {
 func GetAllPlayers(teamID string, channelID string) []Player {
 	results := []Player{}
 
-	database.Connection.Find(&results).
+	database.Connection.
 		Where(&Player{TeamID: teamID, ChannelID: channelID}).
-		Order("points, created_at")
+		Order("points desc, created_at").
+		Find(&results)
 
 	return results
 }
