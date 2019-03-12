@@ -23,7 +23,7 @@ linters-settings:
       - performance
       - style
       - experimental
-    disabled-tags:
+    disabled-checks:
       - rangeValCopy
 
 linters:
