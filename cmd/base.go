@@ -14,7 +14,7 @@ var replacer = strings.NewReplacer("<", "", ">", "", "@", "")
 const userPrefix = "U"
 
 // Register add a command to commands list an prepare to register to slacker
-func Register(usage string, description string, handler func(request slacker.Request, response slacker.ResponseWriter)) {
+func Register(usage, description string, handler func(request slacker.Request, response slacker.ResponseWriter)) {
 	log.Infof("Registering %s - %s", usage, description)
 	slack.Client.Command(usage, &slacker.CommandDefinition{Description: description, Handler: handler})
 }
@@ -34,11 +34,11 @@ func sayWhat(request slacker.Request, response slacker.ResponseWriter) {
 	response.Reply(fmt.Sprintf("I have no idea what you mean by _%s_", request.Event().Text))
 }
 
-func isUser(SlackID string) bool {
-	if len(SlackID) > 9 {
+func isUser(slackID string) bool {
+	if len(slackID) > 9 {
 		return false
 	}
-	if strings.HasPrefix(SlackID, userPrefix) {
+	if strings.HasPrefix(slackID, userPrefix) {
 		return true
 	}
 	return false

@@ -23,6 +23,8 @@ linters-settings:
       - performance
       - style
       - experimental
+    disabled-tags:
+      - rangeValCopy
 
 linters:
   enable-all: true

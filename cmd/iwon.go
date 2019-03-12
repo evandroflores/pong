@@ -19,12 +19,12 @@ func iWon(request slacker.Request, response slacker.ResponseWriter) {
 	loserID := cleanID(request.StringParam("@loser", ""))
 
 	if !isUser(loserID) {
-		response.ReportError(fmt.Errorf("The given loser is not a User"))
+		response.Reply("_The given loser is not a User_")
 		return
 	}
 
 	if winnerID == loserID {
-		response.ReportError(fmt.Errorf("Same player? Go find someone to play"))
+		response.Reply("_Same player? Go find someone to play_")
 		return
 	}
 
@@ -35,8 +35,8 @@ func iWon(request slacker.Request, response slacker.ResponseWriter) {
 	loser, _ := model.GetOrCreatePlayer(teamID, channelID, loserID)
 
 	winner.Points, loser.Points = elo.Calc(winner.Points, loser.Points)
-	winner.Update()
-	loser.Update()
+	_ = winner.Update()
+	_ = loser.Update()
 
 	response.Reply(fmt.Sprintf("*%s* (%04.f pts) x *%s* (%04.f pts)", winner.Name, winner.Points, loser.Name, loser.Points))
 }

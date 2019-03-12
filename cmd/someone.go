@@ -19,7 +19,7 @@ func someone(request slacker.Request, response slacker.ResponseWriter) {
 	channelID := cleanID(request.Event().Channel)
 
 	if !isUser(userID) {
-		response.ReportError(fmt.Errorf("Not a User"))
+		response.Reply("_Not a User_")
 		return
 	}
 

@@ -19,12 +19,12 @@ func simulate(request slacker.Request, response slacker.ResponseWriter) {
 	playerBID := cleanID(request.StringParam("@playerB", ""))
 
 	if !isUser(playerAID) {
-		response.ReportError(fmt.Errorf("The given winner is not a User"))
+		response.Reply("_The given winner is not a User_")
 		return
 	}
 
 	if !isUser(playerBID) {
-		response.ReportError(fmt.Errorf("The given loser is not a User"))
+		response.Reply("_The given loser is not a User_")
 		return
 	}
 
