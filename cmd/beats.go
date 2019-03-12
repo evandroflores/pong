@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	Register("<@winner> beats <@loser>", "Records points for a given Winner and Loser.", beats)
+	Register("save <@winner> beats <@loser>", "Records points for a given Winner and Loser.", beats)
 }
 
 func beats(request slacker.Request, response slacker.ResponseWriter) {
