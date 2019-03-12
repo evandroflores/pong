@@ -32,3 +32,9 @@ ifeq "$(wildcard Gopkg.toml)" ""
 endif
 	@dep ensure
 	@dep status
+
+lint:
+	@golangci-lint run
+
+linter-install:
+	go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
