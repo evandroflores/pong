@@ -35,6 +35,9 @@ func sayWhat(request slacker.Request, response slacker.ResponseWriter) {
 }
 
 func isUser(SlackID string) bool {
+	if strings.Contains(SlackID, " ") {
+		return false
+	}
 	if strings.HasPrefix(SlackID, userPrefix) {
 		return true
 	}
