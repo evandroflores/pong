@@ -16,5 +16,5 @@ func top(request slacker.Request, response slacker.ResponseWriter) {
 	channelID := cleanID(request.Event().Channel)
 	limit := request.IntegerParam("limit", 10)
 
-	response.Reply(makeRank(model.GetPlayers(teamID, channelID, limit)))
+	response.Reply(makeRank(request.Event().Channel, model.GetPlayers(teamID, channelID, limit)))
 }
