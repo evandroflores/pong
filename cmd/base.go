@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var replacer = strings.NewReplacer("<", "", ">", "", "@", "")
+var replacer = strings.NewReplacer("<", "", ">", "", "@", "", "#", "")
 
 const userPrefix = "U"
 
