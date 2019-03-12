@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 
 	log "github.com/sirupsen/logrus"
@@ -24,7 +25,8 @@ func main() {
 	defer database.Close()
 	err := slack.Listen(ctx)
 	if err != nil {
-		log.Fatal("Could not start the bot", err)
+		log.Error("Could not start the bot", err)
+		runtime.Goexit()
 	}
 }
 
