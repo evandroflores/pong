@@ -69,7 +69,7 @@ func (player Player) Update() error {
 	}
 
 	if dbPlayer == (Player{}) {
-		return fmt.Errorf("Player not found - %s", player.ToStr())
+		return fmt.Errorf("player not found - %s", player.ToStr())
 	}
 
 	dbPlayer.ingestData()
@@ -91,8 +91,8 @@ func (player *Player) ingestData() {
 	player.TeamID = slackUser.TeamID
 }
 
-// GetPlayers list a number of players limited by the given threshhold
-func GetPlayers(teamID string, channelID string, limit int) []Player {
+// GetPlayers list a number of players limited by the given threshold
+func GetPlayers(teamID, channelID string, limit int) []Player {
 	results := []Player{}
 
 	database.Connection.
@@ -105,7 +105,7 @@ func GetPlayers(teamID string, channelID string, limit int) []Player {
 }
 
 // GetAllPlayers list all players
-func GetAllPlayers(teamID string, channelID string) []Player {
+func GetAllPlayers(teamID, channelID string) []Player {
 	results := []Player{}
 
 	database.Connection.
