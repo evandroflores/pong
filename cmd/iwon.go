@@ -10,6 +10,8 @@ import (
 
 func init() {
 	Register("I won <@loser>", "Update your win and the loser points.", iWon)
+	Register("I beat <@loser>", "Update your win and the loser points.", iWon)
+	Register("I crushed <@loser>", "Update your win and the loser points.", iWon)
 }
 
 func iWon(request slacker.Request, response slacker.ResponseWriter) {
