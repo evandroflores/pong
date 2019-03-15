@@ -39,6 +39,9 @@ lint:
 linter-install:
 	@go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
+test:
+	@go test -gcflags=-l ./...
+
 cover:
 	@go test ./... -coverprofile coverage.txt; go tool cover -func coverage.txt
 

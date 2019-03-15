@@ -91,6 +91,18 @@ func (player *Player) ingestData() {
 	player.TeamID = slackUser.TeamID
 }
 
+func (player *Player) GetPosition() int {
+	count := 0
+
+	database.Connection.
+		Model(&Player{}).
+		Where(&Player{TeamID: player.TeamID, ChannelID: player.ChannelID}).
+		Where("points > ?", player.Points).
+		Count(&count)
+
+	return count + 1
+}
+
 // GetPlayers list a number of players limited by the given threshold
 func GetPlayers(teamID, channelID string, limit int) []Player {
 	results := []Player{}

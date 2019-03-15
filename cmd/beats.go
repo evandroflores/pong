@@ -50,5 +50,7 @@ func beats(request slacker.Request, response slacker.ResponseWriter) {
 	_ = winner.Update()
 	_ = loser.Update()
 
-	response.Reply(fmt.Sprintf("*%s* (%04.f pts) x *%s* (%04.f pts)", winner.Name, winner.Points, loser.Name, loser.Points))
+	response.Reply(fmt.Sprintf("*%s* %04.f pts (#%02d) vs *%s* %04.f pts (#%02d)",
+		winner.Name, winner.Points, winner.GetPosition(),
+		loser.Name, loser.Points, loser.GetPosition()))
 }

@@ -24,5 +24,6 @@ func me(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	response.Reply(fmt.Sprintf("You have %0.f points", user.Points))
+	response.Reply(fmt.Sprintf("You have %0.f points (#%02d) on <#%s>",
+		user.Points, user.GetPosition(), channelID))
 }
