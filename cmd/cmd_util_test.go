@@ -16,23 +16,23 @@ type fakeRequest struct {
 }
 
 func (r *fakeRequest) Param(key string) string {
-	return "fake"
+	return r.StringParam(key, "")
 }
 
-func (r *fakeRequest) StringParam(key string, defaultValue string) string {
-	return "fake"
+func (r *fakeRequest) StringParam(key, defaultValue string) string {
+	return r.properties.StringParam(key, defaultValue)
 }
 
 func (r *fakeRequest) BooleanParam(key string, defaultValue bool) bool {
-	return false
+	return r.properties.BooleanParam(key, defaultValue)
 }
 
 func (r *fakeRequest) IntegerParam(key string, defaultValue int) int {
-	return 1
+	return r.properties.IntegerParam(key, defaultValue)
 }
 
 func (r *fakeRequest) FloatParam(key string, defaultValue float64) float64 {
-	return 1.0
+	return r.properties.FloatParam(key, defaultValue)
 }
 
 func (r *fakeRequest) Context() context.Context {
