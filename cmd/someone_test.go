@@ -15,8 +15,14 @@ import (
 func TestTryToShowInvalidUser(t *testing.T) {
 	defer monkey.UnpatchAll()
 
+	mockMsgOptionUser := func(string) slack.MsgOption {
+		t.Fatal("called")
+		return nil
+	}
+	_ = monkey.Patch(slack.MsgOptionUser, mockMsgOptionUser)
+
 	var client = slack.New("FakeClient")
-	var rtm *slack.RTM //= client.NewRTM()
+	var rtm = client.NewRTM()
 	var mockResponse = slacker.NewResponse("X", client, rtm)
 
 	var info = &slack.Info{
@@ -61,20 +67,20 @@ func TestTryToShowInvalidUser(t *testing.T) {
 			return info, "", nil
 		})
 
-	var evt *slack.MessageEvent
-	var props *proper.Properties
+	var evt = &slack.MessageEvent{
+		Msg: slack.Msg{
+			Type:    "",
+			Channel: "CCCCCCCCC",
+			User:    "UUUUUUUUUU",
+			Text:    "TEST",
+		}}
+
+	var props = proper.NewProperties(map[string]string{"@someone": "AAA"})
 	var mockRequest = slacker.NewRequest(context.Background(), evt, props)
 
-	params := map[string]string{"@someone": "AAA"}
-	monkey.PatchInstanceMethod(reflect.TypeOf(mockRequest), "StringParam",
-		func(key string, defaultValue string) string {
-			if params == nil {
-				return ""
-			}
-			return params[key]
-		})
-	// Testing
-	t.Fatal("*** r.rtm.GetInfo().User.ID ***", rtm.GetInfo())
+	//client.StartRTM()
+
+	//t.Fatal("*** CHECK ***", slack.MsgOptionUser(rtm.GetInfo().User.ID))
 
 	someone(mockRequest, mockResponse)
 }
