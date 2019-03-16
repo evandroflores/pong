@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/evandroflores/pong/model"
 	"github.com/nlopes/slack"
 	"github.com/shomali11/proper"
 	"github.com/stretchr/testify/assert"
@@ -15,12 +16,23 @@ const teamID string = "T12345678"
 const channelID string = "C12345678"
 const userID string = "U12345678"
 
-var evt = &slack.MessageEvent{
-	Msg: slack.Msg{
-		Team:    "TTTTTTTTT",
-		Channel: "CCCCCCCCC",
-		User:    "UUUUUUUUU",
-	}}
+func makeTestEvent() *slack.MessageEvent {
+	return &slack.MessageEvent{
+		Msg: slack.Msg{
+			Team:    "TTTTTTTTT",
+			Channel: "CCCCCCCCC",
+			User:    "UUUUUUUUU",
+		}}
+}
+
+func makeTestPlayer() model.Player {
+	return model.Player{
+		TeamID:    "TTTTTTTTT",
+		ChannelID: "CCCCCCCCC",
+		SlackID:   "UUUUUUUUU",
+		Name:      "Fake User",
+	}
+}
 
 func TestCleanID(t *testing.T) {
 	assert.NotContains(t, cleanID(teamID), "<", ">", "#", "@")
@@ -46,6 +58,7 @@ func TestIsUser(t *testing.T) {
 
 func TestSayWhat(t *testing.T) {
 	var props = proper.NewProperties(map[string]string{})
+	evt := makeTestEvent()
 	evt.Msg.Text = "Testing"
 	request := &fakeRequest{event: evt, properties: props}
 	response := &fakeResponse{}
