@@ -15,7 +15,7 @@ func TestTryToShowInvalidUser(t *testing.T) {
 			"@someone": "NOTAUSER",
 		})
 
-	request := &fakeRequest{event: evt, properties: props}
+	request := &fakeRequest{event: makeTestEvent(), properties: props}
 	response := &fakeResponse{}
 
 	someone(request, response)
@@ -30,7 +30,7 @@ func TestTryToShowTwoUsersNames(t *testing.T) {
 			"@someone": "USER1234USER123",
 		})
 
-	request := &fakeRequest{event: evt, properties: props}
+	request := &fakeRequest{event: makeTestEvent(), properties: props}
 	response := &fakeResponse{}
 
 	someone(request, response)
@@ -45,7 +45,7 @@ func TestTryToShowEmpty(t *testing.T) {
 			"@someone": "",
 		})
 
-	request := &fakeRequest{event: evt, properties: props}
+	request := &fakeRequest{event: makeTestEvent(), properties: props}
 	response := &fakeResponse{}
 
 	someone(request, response)
@@ -55,12 +55,7 @@ func TestTryToShowEmpty(t *testing.T) {
 }
 
 func TestShowValidUser(t *testing.T) {
-	player := model.Player{
-		TeamID:    "TTTTTTTTT",
-		ChannelID: "CCCCCCCCC",
-		SlackID:   "UUUUUUUUU",
-		Name:      "Fake User",
-	}
+	player := makeTestPlayer()
 
 	database.Connection.Create(&player)
 	defer database.Connection.Unscoped().Where("deleted_at is not null").Delete(&model.Player{})
@@ -71,7 +66,7 @@ func TestShowValidUser(t *testing.T) {
 			"@someone": "UUUUUUUUU",
 		})
 
-	request := &fakeRequest{event: evt, properties: props}
+	request := &fakeRequest{event: makeTestEvent(), properties: props}
 	response := &fakeResponse{}
 
 	someone(request, response)
