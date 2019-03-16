@@ -7,16 +7,7 @@ import (
 	"github.com/evandroflores/pong/model"
 	"github.com/shomali11/proper"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/nlopes/slack"
 )
-
-var evt = &slack.MessageEvent{
-	Msg: slack.Msg{
-		Team:    "TTTTTTTTT",
-		Channel: "CCCCCCCCC",
-		User:    "UUUUUUUUU",
-	}}
 
 func TestTryToShowInvalidUser(t *testing.T) {
 	var props = proper.NewProperties(
@@ -37,6 +28,21 @@ func TestTryToShowTwoUsersNames(t *testing.T) {
 	var props = proper.NewProperties(
 		map[string]string{
 			"@someone": "USER1234USER123",
+		})
+
+	request := &fakeRequest{event: evt, properties: props}
+	response := &fakeResponse{}
+
+	someone(request, response)
+	assert.Contains(t, response.GetMessages(), "_Not a User_")
+	assert.Len(t, response.GetMessages(), 1)
+	assert.Empty(t, response.GetErrors())
+}
+
+func TestTryToShowEmpty(t *testing.T) {
+	var props = proper.NewProperties(
+		map[string]string{
+			"@someone": "",
 		})
 
 	request := &fakeRequest{event: evt, properties: props}

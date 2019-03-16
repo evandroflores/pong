@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/nlopes/slack"
+	"github.com/shomali11/proper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,6 +14,13 @@ const userIDUnclean string = "<@U12345678>"
 const teamID string = "T12345678"
 const channelID string = "C12345678"
 const userID string = "U12345678"
+
+var evt = &slack.MessageEvent{
+	Msg: slack.Msg{
+		Team:    "TTTTTTTTT",
+		Channel: "CCCCCCCCC",
+		User:    "UUUUUUUUU",
+	}}
 
 func TestCleanID(t *testing.T) {
 	assert.NotContains(t, cleanID(teamID), "<", ">", "#", "@")
@@ -33,4 +42,16 @@ func TestIsUser(t *testing.T) {
 	assert.False(t, isUser(fmt.Sprintf("%s %s", userID, userID)))
 	assert.False(t, isUser(""))
 	assert.False(t, isUser(" "))
+}
+
+func TestSayWhat(t *testing.T) {
+	var props = proper.NewProperties(map[string]string{})
+	evt.Msg.Text = "Testing"
+	request := &fakeRequest{event: evt, properties: props}
+	response := &fakeResponse{}
+
+	sayWhat(request, response)
+	assert.Contains(t, response.GetMessages(), "I have no idea what you mean by _Testing_")
+	assert.Len(t, response.GetMessages(), 1)
+	assert.Empty(t, response.GetErrors())
 }
