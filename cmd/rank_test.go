@@ -14,7 +14,6 @@ type RankTestSuite struct {
 	suite.Suite
 	rankChannelID   string
 	noRankChannelID string
-	rankHeader      string
 	top20rank       string
 	top10rank       string
 	top5rank        string
