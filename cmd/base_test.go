@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/evandroflores/pong/model"
 	"github.com/nlopes/slack"
@@ -16,6 +18,10 @@ const teamID string = "T12345678"
 const channelID string = "C12345678"
 const userID string = "U12345678"
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 func makeTestEvent() *slack.MessageEvent {
 	return &slack.MessageEvent{
 		Msg: slack.Msg{
@@ -26,11 +32,15 @@ func makeTestEvent() *slack.MessageEvent {
 }
 
 func makeTestPlayer() model.Player {
+	randomInt := rand.Intn(10000000)
+	name := fmt.Sprintf("Fake User - %08d", randomInt)
+	slackID := fmt.Sprintf("U%08d", randomInt)
+
 	return model.Player{
 		TeamID:    "TTTTTTTTT",
 		ChannelID: "CCCCCCCCC",
-		SlackID:   "UUUUUUUUU",
-		Name:      "Fake User",
+		SlackID:   slackID,
+		Name:      name,
 	}
 }
 

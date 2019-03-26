@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/evandroflores/pong/database"
@@ -63,14 +64,14 @@ func TestShowValidUser(t *testing.T) {
 
 	var props = proper.NewProperties(
 		map[string]string{
-			"@someone": "UUUUUUUUU",
+			"@someone": player.SlackID,
 		})
 
 	request := &fakeRequest{event: makeTestEvent(), properties: props}
 	response := &fakeResponse{}
 
 	someone(request, response)
-	assert.Contains(t, response.GetMessages(), "*Fake User* has 1000 points (#01)")
+	assert.Contains(t, response.GetMessages(), fmt.Sprintf("*%s* has 1000 points (#01)", player.Name))
 	assert.Len(t, response.GetMessages(), 1)
 	assert.Empty(t, response.GetErrors())
 }

@@ -31,8 +31,6 @@ func (s *RankTestSuite) SetupSuite() {
 	s.players = []model.Player{}
 	for i := 1; i <= 20; i++ {
 		player := makeTestPlayer()
-		player.Name = fmt.Sprintf("%s - %02d", player.Name, i)
-		player.SlackID = fmt.Sprintf("UUUUUUU%02d", i)
 		player.Points = 1000 - float64(i)
 		s.players = append(s.players, player)
 
