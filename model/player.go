@@ -25,7 +25,7 @@ type Player struct {
 }
 
 // ToStr returns a string representation of Player
-func (player Player) ToStr() string {
+func (player *Player) ToStr() string {
 	return fmt.Sprintf("TeamID: %s ChannelID: %s SlackID: %s", player.TeamID, player.ChannelID, player.SlackID)
 }
 
@@ -40,7 +40,7 @@ func GetPlayer(teamID, channelID, slackID string) (Player, error) {
 }
 
 // Add adds a new player.
-func (player Player) Add() {
+func (player *Player) Add() {
 	player.ingestData()
 	database.Connection.Create(&player)
 }
@@ -61,7 +61,7 @@ func GetOrCreatePlayer(teamID, channelID, slackID string) (Player, error) {
 }
 
 // Update a given player
-func (player Player) Update() error {
+func (player *Player) Update() error {
 	dbPlayer, err := GetPlayer(player.TeamID, player.ChannelID, player.SlackID)
 
 	if err != nil {
