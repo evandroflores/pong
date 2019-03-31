@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/evandroflores/pong/model"
 	"github.com/evandroflores/pong/slack"
 	"github.com/shomali11/slacker"
 	log "github.com/sirupsen/logrus"
@@ -42,4 +43,30 @@ func isUser(slackID string) bool {
 		return true
 	}
 	return false
+}
+
+func getMatchPlayers(teamID, channelID, winnerID, loserID string) (winner, loser model.Player, err error) {
+	if !isUser(winnerID) {
+		return model.Player{}, model.Player{}, fmt.Errorf("_The given winner is not a User_")
+	}
+
+	if !isUser(loserID) {
+		return model.Player{}, model.Player{}, fmt.Errorf("_The given loser is not a User_")
+	}
+
+	if winnerID == loserID {
+		return model.Player{}, model.Player{}, fmt.Errorf("_Same player? Go find someone to play_")
+	}
+
+	winner, errW := model.GetOrCreatePlayer(teamID, channelID, winnerID)
+	if errW != nil {
+		return model.Player{}, model.Player{}, errW
+	}
+
+	loser, errL := model.GetOrCreatePlayer(teamID, channelID, loserID)
+	if errL != nil {
+		return model.Player{}, model.Player{}, errL
+	}
+
+	return winner, loser, nil
 }

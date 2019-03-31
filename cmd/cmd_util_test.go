@@ -52,11 +52,11 @@ type fakeResponse struct {
 	client   *slack.Client
 	rtm      *slack.RTM
 	messages []string
-	errors   []error
+	errors   []string
 }
 
 func (r *fakeResponse) ReportError(err error) {
-	r.errors = append(r.errors, err)
+	r.errors = append(r.errors, err.Error())
 }
 
 func (r *fakeResponse) Typing() {
@@ -79,6 +79,6 @@ func (r *fakeResponse) GetMessages() []string {
 	return r.messages
 }
 
-func (r *fakeResponse) GetErrors() []error {
+func (r *fakeResponse) GetErrors() []string {
 	return r.errors
 }

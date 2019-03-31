@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/evandroflores/pong/elo"
-	"github.com/evandroflores/pong/model"
 	"github.com/shomali11/slacker"
 )
 
@@ -15,30 +14,15 @@ func init() {
 func simulate(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
-	playerAID := cleanID(request.StringParam("@playerA", ""))
-	playerBID := cleanID(request.StringParam("@playerB", ""))
-
-	if !isUser(playerAID) {
-		response.Reply("_The given winner is not a User_")
-		return
-	}
-
-	if !isUser(playerBID) {
-		response.Reply("_The given loser is not a User_")
-		return
-	}
-
 	teamID := cleanID(request.Event().Team)
 	channelID := cleanID(request.Event().Channel)
 
-	playerA, errA := model.GetOrCreatePlayer(teamID, channelID, playerAID)
-	if errA != nil {
-		response.ReportError(errA)
-		return
-	}
-	playerB, errB := model.GetOrCreatePlayer(teamID, channelID, playerBID)
-	if errB != nil {
-		response.ReportError(errB)
+	playerAID := cleanID(request.StringParam("@playerA", ""))
+	playerBID := cleanID(request.StringParam("@playerB", ""))
+
+	playerA, playerB, err := getMatchPlayers(teamID, channelID, playerAID, playerBID)
+	if err != nil {
+		response.ReportError(err)
 		return
 	}
 	simulateA, simulateB := elo.Calc(playerA.Points, playerB.Points)
