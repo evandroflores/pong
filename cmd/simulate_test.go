@@ -47,9 +47,8 @@ func (s *SimulateTestSuite) TestWinnerNotAUser() {
 	response := &fakeResponse{}
 
 	simulate(request, response)
-	s.Contains(response.GetMessages(), "_The given winner is not a User_")
-	s.Len(response.GetMessages(), 1)
-	s.Empty(response.GetErrors())
+	s.Contains(response.GetErrors(), "_The given winner is not a User_")
+	s.Len(response.GetErrors(), 1)
 }
 
 func (s *SimulateTestSuite) TestLoserNotAUser() {
@@ -63,9 +62,8 @@ func (s *SimulateTestSuite) TestLoserNotAUser() {
 	response := &fakeResponse{}
 
 	simulate(request, response)
-	s.Contains(response.GetMessages(), "_The given loser is not a User_")
-	s.Len(response.GetMessages(), 1)
-	s.Empty(response.GetErrors())
+	s.Contains(response.GetErrors(), "_The given loser is not a User_")
+	s.Len(response.GetErrors(), 1)
 }
 
 func (s *SimulateTestSuite) TestExpectedEloResult() {
