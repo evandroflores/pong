@@ -18,6 +18,7 @@ func init() {
 	}
 
 	Client = slacker.NewClient(token)
+	Client.CustomResponse(NewCustomResponseWriter)
 }
 
 // Listen enables the Client in listen mode
