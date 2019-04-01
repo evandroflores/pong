@@ -47,15 +47,15 @@ func isUser(slackID string) bool {
 
 func getMatchPlayers(teamID, channelID, winnerID, loserID string) (winner, loser model.Player, err error) {
 	if !isUser(winnerID) {
-		return model.Player{}, model.Player{}, fmt.Errorf("The given winner is not a User")
+		return model.Player{}, model.Player{}, fmt.Errorf("the given winner is not a user")
 	}
 
 	if !isUser(loserID) {
-		return model.Player{}, model.Player{}, fmt.Errorf("The given loser is not a User")
+		return model.Player{}, model.Player{}, fmt.Errorf("the given loser is not a user")
 	}
 
 	if winnerID == loserID {
-		return model.Player{}, model.Player{}, fmt.Errorf("Same player? Go find someone to play")
+		return model.Player{}, model.Player{}, fmt.Errorf("go find someone to play")
 	}
 
 	winner, errW := model.GetOrCreatePlayer(teamID, channelID, winnerID)
