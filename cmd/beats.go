@@ -16,6 +16,7 @@ func beats(request slacker.Request, response slacker.ResponseWriter) {
 
 	teamID := cleanID(request.Event().Team)
 	channelID := cleanID(request.Event().Channel)
+
 	winnerID := cleanID(request.StringParam("@winner", ""))
 	loserID := cleanID(request.StringParam("@loser", ""))
 
@@ -24,6 +25,7 @@ func beats(request slacker.Request, response slacker.ResponseWriter) {
 		response.ReportError(err)
 		return
 	}
+
 	winner.Points, loser.Points = elo.Calc(winner.Points, loser.Points)
 	_ = winner.Update()
 	_ = loser.Update()

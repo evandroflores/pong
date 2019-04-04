@@ -71,6 +71,21 @@ func (s *BeatsTestSuite) TestLoserNotAUser() {
 	s.Len(response.GetErrors(), 1)
 }
 
+func (s *BeatsTestSuite) TestForeverAlone() {
+	var props = proper.NewProperties(
+		map[string]string{
+			"@winner": s.winner.SlackID,
+			"@loser":  s.winner.SlackID,
+		})
+
+	request := &fakeRequest{event: makeTestEvent(), properties: props}
+	response := &fakeResponse{}
+
+	beats(request, response)
+	s.Contains(response.GetErrors(), "go find someone to play")
+	s.Len(response.GetErrors(), 1)
+}
+
 func (s *BeatsTestSuite) TestExpectedEloResult() {
 	var props = proper.NewProperties(
 		map[string]string{
