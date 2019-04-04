@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/evandroflores/pong/elo"
-	"github.com/evandroflores/pong/model"
 	"github.com/shomali11/slacker"
 )
 
@@ -17,24 +16,17 @@ func init() {
 func iWon(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
-	winnerID := cleanID(request.Event().User)
-	loserID := cleanID(request.StringParam("@loser", ""))
-
-	if !isUser(loserID) {
-		response.Reply("_The given loser is not a User_")
-		return
-	}
-
-	if winnerID == loserID {
-		response.Reply("_Same player? Go find someone to play_")
-		return
-	}
-
 	teamID := cleanID(request.Event().Team)
 	channelID := cleanID(request.Event().Channel)
 
-	winner, _ := model.GetOrCreatePlayer(teamID, channelID, winnerID)
-	loser, _ := model.GetOrCreatePlayer(teamID, channelID, loserID)
+	winnerID := cleanID(request.Event().User)
+	loserID := cleanID(request.StringParam("@loser", ""))
+
+	winner, loser, err := getMatchPlayers(teamID, channelID, winnerID, loserID)
+	if err != nil {
+		response.ReportError(err)
+		return
+	}
 
 	winner.Points, loser.Points = elo.Calc(winner.Points, loser.Points)
 	_ = winner.Update()
