@@ -36,6 +36,11 @@ func (s *SimulateTestSuite) SetupSuite() {
 	database.Connection.Create(&s.playerB)
 }
 
+func (s *SimulateTestSuite) TearDownSuite() {
+	database.Connection.Unscoped().Delete(&s.playerA)
+	database.Connection.Unscoped().Delete(&s.playerB)
+}
+
 func (s *SimulateTestSuite) TestWinnerNotAUser() {
 	var props = proper.NewProperties(
 		map[string]string{
@@ -114,9 +119,4 @@ func (s *SimulateTestSuite) TestMakeSureSimulateKeepsPointsUnchanged() {
 
 	s.Equal(s.originalPlayerAPoints, playerAFromDB.Points)
 	s.Equal(s.originalPlayerBPoints, playerBFromDB.Points)
-}
-
-func (s *SimulateTestSuite) TearDownSuite() {
-	database.Connection.Where(&s.playerA).Or(&s.playerB).Delete(&model.Player{})
-	database.Connection.Unscoped().Where("deleted_at is not null").Delete(&model.Player{})
 }
