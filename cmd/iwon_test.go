@@ -45,34 +45,6 @@ func (s *WinTestSuite) TearDownSuite() {
 	database.Connection.Unscoped().Delete(&s.loser)
 }
 
-func (s *WinTestSuite) TestLoserNotAUser() {
-	var props = proper.NewProperties(
-		map[string]string{
-			"@loser": s.loser.Name,
-		})
-
-	request := &fakeRequest{event: s.evt, properties: props}
-	response := &fakeResponse{}
-
-	iWon(request, response)
-	s.Contains(response.GetErrors(), "the given loser is not a user")
-	s.Len(response.GetErrors(), 1)
-}
-
-func (s *WinTestSuite) TestForeverAlone() {
-	var props = proper.NewProperties(
-		map[string]string{
-			"@loser": s.evt.User,
-		})
-
-	request := &fakeRequest{event: s.evt, properties: props}
-	response := &fakeResponse{}
-
-	iWon(request, response)
-	s.Contains(response.GetErrors(), "go find someone to play")
-	s.Len(response.GetErrors(), 1)
-}
-
 func (s *WinTestSuite) TestExpectedEloResult() {
 	var props = proper.NewProperties(
 		map[string]string{
