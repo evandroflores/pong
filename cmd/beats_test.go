@@ -5,10 +5,12 @@ import (
 	"testing"
 
 	"github.com/evandroflores/pong/elo"
+	"github.com/nlopes/slack"
 
 	"github.com/evandroflores/pong/database"
 	"github.com/evandroflores/pong/model"
 	"github.com/shomali11/proper"
+	"github.com/shomali11/slacker"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -18,18 +20,42 @@ type BeatsTestSuite struct {
 	originalWinnerPoints float64
 	loser                model.Player
 	originalLoserPoints  float64
+	evt                  *slack.MessageEvent
+	cmd                  func(request slacker.Request, response slacker.ResponseWriter)
 }
 
 func TestBeatsTestSuite(t *testing.T) {
-	suite.Run(t, new(BeatsTestSuite))
+	testBeats := new(BeatsTestSuite)
+	testBeats.cmd = beats
+	testBeats.evt = makeTestEvent()
+
+	testILost := new(BeatsTestSuite)
+	testILost.cmd = iLost
+	testILost.winner = makeTestPlayer()
+	testILost.evt = makeTestEvent()
+	testILost.evt.User = testILost.winner.SlackID
+
+	testIWon := new(BeatsTestSuite)
+	testIWon.cmd = iWon
+	testIWon.loser = makeTestPlayer()
+	testIWon.evt = makeTestEvent()
+	testIWon.evt.User = testILost.loser.SlackID
+
+	suite.Run(t, testBeats)
+	suite.Run(t, testILost)
+	suite.Run(t, testIWon)
 }
 
-func (s *BeatsTestSuite) SetupSuite() {
+func (s *BeatsTestSuite) SetupTest() {
 	s.originalWinnerPoints = 1200
 	s.originalLoserPoints = 800
-	s.winner = makeTestPlayer()
+	if (s.winner == model.Player{}) {
+		s.winner = makeTestPlayer()
+	}
 	s.winner.Points = s.originalWinnerPoints
-	s.loser = makeTestPlayer()
+	if (s.loser == model.Player{}) {
+		s.loser = makeTestPlayer()
+	}
 	s.loser.Points = s.originalLoserPoints
 
 	database.Connection.Create(&s.winner)
@@ -48,12 +74,11 @@ func (s *BeatsTestSuite) TestExpectedEloResult() {
 			"@loser":  s.loser.SlackID,
 		})
 
-	request := &fakeRequest{event: makeTestEvent(), properties: props}
+	request := &fakeRequest{event: s.evt, properties: props}
 	response := &fakeResponse{}
 
 	eloWinnerPts, eloLoserPts := elo.Calc(s.originalWinnerPoints, s.originalLoserPoints)
-
-	beats(request, response)
+	s.cmd(request, response)
 
 	s.Contains(response.GetMessages(),
 		fmt.Sprintf("*%s* %04.f pts (#%02d) vs *%s* %04.f pts (#%02d)",
