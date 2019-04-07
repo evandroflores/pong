@@ -16,14 +16,14 @@ func init() {
 	log.Info("Initializing database")
 	var err error
 
-	dbStringConnection := os.Getenv("DATABASE_URL")
+	dbStringConnection := os.Getenv("PONG_DATABASE")
 	if dbStringConnection == "" {
 		log.Fatal("No database string connection found. Set DATABASE_URL to continue.")
 		return
 	}
 
 	Connection, err = gorm.Open("postgres", dbStringConnection)
-	Connection.LogMode(true)
+	Connection.LogMode(os.Getenv("DEBUG") == "True")
 
 	if err != nil {
 		log.Fatalf("Could not create a database connection - %s", err)
