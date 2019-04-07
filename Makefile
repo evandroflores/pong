@@ -5,12 +5,11 @@ ifndef GOPATH
 	@exit 1
 endif
 ifndef DATABASE_URL
-ifdef PONG_DATABASE
-export DATABASE_URL=$(PONG_DATABASE)
-else
-	@echo "Couldn't find the PONG_DATABASE or DATABASE_URL env"
+	@echo "Couldn't find the DATABASE_URL env"
 	@exit 1
 endif
+ifndef PONG_TOKEN
+	@echo "Couldn't find the PONG_TOKEN env"
 endif
 
 run: check-env
