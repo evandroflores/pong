@@ -40,10 +40,10 @@ linter-install:
 	@go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 test:
-	@go test -gcflags=-l ./...
+	@go test -gcflags=-l ./... -coverprofile coverage.txt
 
-cover:
-	@go test ./... -coverprofile coverage.txt; go tool cover -func coverage.txt
+cover: test
+	@go tool cover -func coverage.txt
 
 opencover:
 	@go tool cover -html coverage.txt
