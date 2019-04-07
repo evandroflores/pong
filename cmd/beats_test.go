@@ -31,15 +31,15 @@ func TestBeatsTestSuite(t *testing.T) {
 
 	testILost := new(BeatsTestSuite)
 	testILost.cmd = iLost
-	testILost.winner = makeTestPlayer()
+	testILost.loser = makeTestPlayer()
 	testILost.evt = makeTestEvent()
-	testILost.evt.User = testILost.winner.SlackID
+	testILost.evt.User = testILost.loser.SlackID
 
 	testIWon := new(BeatsTestSuite)
 	testIWon.cmd = iWon
-	testIWon.loser = makeTestPlayer()
+	testIWon.winner = makeTestPlayer()
 	testIWon.evt = makeTestEvent()
-	testIWon.evt.User = testILost.loser.SlackID
+	testIWon.evt.User = testIWon.winner.SlackID
 
 	suite.Run(t, testBeats)
 	suite.Run(t, testILost)
@@ -62,7 +62,7 @@ func (s *BeatsTestSuite) SetupTest() {
 	database.Connection.Create(&s.loser)
 }
 
-func (s *BeatsTestSuite) TearDownSuite() {
+func (s *BeatsTestSuite) TearDownTest() {
 	database.Connection.Unscoped().Delete(&s.winner)
 	database.Connection.Unscoped().Delete(&s.loser)
 }
@@ -78,6 +78,7 @@ func (s *BeatsTestSuite) TestExpectedEloResult() {
 	response := &fakeResponse{}
 
 	eloWinnerPts, eloLoserPts := elo.Calc(s.originalWinnerPoints, s.originalLoserPoints)
+
 	s.cmd(request, response)
 
 	s.Contains(response.GetMessages(),
