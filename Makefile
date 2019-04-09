@@ -1,15 +1,21 @@
 
 check-env:
 ifndef GOPATH
-	@echo "Couldn't find the GOPATH env"
+	@echo "[Makefile] GOPATH FAIL - Environment variable not set."
 	@exit 1
+else
+	@echo "[Makefile] GOPATH OK"
 endif
 ifndef DATABASE_URL
-	@echo "Couldn't find the DATABASE_URL env"
+	@echo "[Makefile] DATABASE_URL FAIL - Environment variable not set."
 	@exit 1
+else
+	@echo "[Makefile] DATABASE_URL OK"
 endif
 ifndef PONG_TOKEN
-	@echo "Couldn't find the PONG_TOKEN env"
+	@echo "[Makefile] PONG_TOKEN FAIL - Environment variable not set."
+else
+	@echo "[Makefile] PONG_TOKEN OK"
 endif
 
 run: check-env
@@ -20,14 +26,18 @@ build: check-env
 
 check-dep:
 ifeq "$(shell command -v dep)" ""
-	@echo "dep is not available please install https://golang.github.io/dep/"
+	@echo "[Makefile] Dependency management FAIL - Please install https://golang.github.io/dep/"
 	@exit 1
+else
+	@echo "[Makefile] Dependency management OK"
 endif
 
 vendor: check-dep
 ifeq "$(wildcard Gopkg.toml)" ""
-	@echo "Initializing dep..."
+	@echo "[Makefile] Initializing dep..."
 	@dep init
+else
+	@echo "[Makefile] Gopkg.toml OK"
 endif
 	@dep ensure
 	@dep status
