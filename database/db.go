@@ -16,7 +16,7 @@ func init() {
 	log.Info("Initializing database")
 	var err error
 
-	dbStringConnection := os.Getenv("PONG_DATABASE")
+	dbStringConnection := os.Getenv("DATABASE_URL")
 	if dbStringConnection == "" {
 		log.Fatal("No database string connection found. Set DATABASE_URL to continue.")
 		return
