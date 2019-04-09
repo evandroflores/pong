@@ -48,7 +48,7 @@ lint:
 linter-install:
 	@go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
-test:
+test: check-env
 	@go test -gcflags=-l ./... -coverprofile coverage.txt
 
 cover: test
