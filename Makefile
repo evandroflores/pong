@@ -10,7 +10,7 @@ ifndef DATABASE_URL
 	@echo "[Makefile] DATABASE_URL FAIL - Environment variable not set."
 	@exit 1
 else
-	@echo "[Makefile] DATABASE_URL OK"
+	@echo "[Makefile] DATABASE_URL OK - $DATABASE_URL"
 endif
 ifndef PONG_TOKEN
 	@echo "[Makefile] PONG_TOKEN FAIL - Environment variable not set."
