@@ -37,12 +37,14 @@ func sayWhat(request slacker.Request, response slacker.ResponseWriter) {
 
 func isUser(slackID string) bool {
 	if len(slackID) > 9 {
+		log.Warnf("UserID format failed [%s] - Checking size (%d) > 9", slackID, len(slackID))
 		return false
 	}
-	if strings.HasPrefix(slackID, userPrefix) {
-		return true
+	if !strings.HasPrefix(slackID, userPrefix) {
+		log.Warnf("UserID format failed [%s] - Checking prefix (%s)", slackID, userPrefix)
+		return false
 	}
-	return false
+	return true
 }
 
 func getMatchPlayers(teamID, channelID, winnerID, loserID string) (winner, loser model.Player, err error) {
