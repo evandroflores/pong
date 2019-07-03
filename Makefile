@@ -1,3 +1,4 @@
+export GO111MODULE=on
 
 check-env:
 ifndef GOPATH
@@ -23,24 +24,6 @@ run: check-env
 
 build: check-env
 	@go build -o bin/pong
-
-check-dep:
-ifeq "$(shell command -v dep)" ""
-	@echo "[Makefile] Dependency management FAIL - Please install https://golang.github.io/dep/"
-	@exit 1
-else
-	@echo "[Makefile] Dependency management OK"
-endif
-
-vendor: check-dep
-ifeq "$(wildcard Gopkg.toml)" ""
-	@echo "[Makefile] Initializing dep..."
-	@dep init
-else
-	@echo "[Makefile] Gopkg.toml OK"
-endif
-	@dep ensure
-	@dep status
 
 lint:
 	@golangci-lint run
