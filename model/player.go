@@ -130,9 +130,9 @@ func GetAllPlayers(teamID, channelID string) []Player {
 	return results
 }
 
-func (player *Player) GetBlockCard(extra string) []ns.Block {
+func (player *Player) GetBlockCardWithText(extra string) []ns.Block {
 	if extra == "" {
-		extra = fmt.Sprintf("(%04.f pts) #%d", user.Points, user.GetPosition())
+		extra = fmt.Sprintf("(%04.f pts) *#%02d*", player.Points, player.GetPosition())
 	}
 	avatar := ns.NewImageBlockElement(player.Image, player.Name)
 	text := ns.NewTextBlockObject(ns.MarkdownType, fmt.Sprintf("*%s* %s", player.Name, extra), false, false)
@@ -142,4 +142,8 @@ func (player *Player) GetBlockCard(extra string) []ns.Block {
 	c, _ := json.Marshal(context)
 	fmt.Println(string(c))
 	return context
+}
+
+func (player *Player) GetBlockCard() []ns.Block {
+	return player.GetBlockCardWithText("")
 }
