@@ -1,11 +1,13 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/evandroflores/pong/database"
 	"github.com/evandroflores/pong/slack"
 	"github.com/jinzhu/gorm"
+	ns "github.com/nlopes/slack"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -126,4 +128,18 @@ func GetAllPlayers(teamID, channelID string) []Player {
 		Find(&results)
 
 	return results
+}
+
+func (player *Player) GetBlockCard(extra string) []ns.Block {
+	if extra == "" {
+		extra = fmt.Sprintf("(%04.f pts) #%d", user.Points, user.GetPosition())
+	}
+	avatar := ns.NewImageBlockElement(player.Image, player.Name)
+	text := ns.NewTextBlockObject(ns.MarkdownType, fmt.Sprintf("*%s* %s", player.Name, extra), false, false)
+
+	context := []ns.Block{}
+	context = append(context, ns.NewContextBlock(string(player.ID), avatar, text))
+	c, _ := json.Marshal(context)
+	fmt.Println(string(c))
+	return context
 }
