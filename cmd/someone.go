@@ -29,6 +29,6 @@ func someone(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	response.Reply(fmt.Sprintf("*%s* has %0.f points (#%02d)",
-		user.Name, user.Points, user.GetPosition()))
+	blocks := user.GetBlockCard(fmt.Sprintf("(%04.f pts) #%d", user.Points, user.GetPosition()))
+	response.Reply("", slacker.WithBlocks(blocks))
 }
