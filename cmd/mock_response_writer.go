@@ -53,6 +53,7 @@ type fakeResponse struct {
 	rtm      *slack.RTM
 	messages []string
 	errors   []string
+	blocks   []slack.Block
 }
 
 func (r *fakeResponse) ReportError(err error) {
@@ -64,7 +65,22 @@ func (r *fakeResponse) Typing() {
 }
 
 func (r *fakeResponse) Reply(message string, options ...slacker.ReplyOption) {
+	defaults := newReplyDefaults(options...)
+
 	r.messages = append(r.messages, message)
+	r.blocks = append(r.blocks, defaults.Blocks...)
+}
+
+func newReplyDefaults(options ...slacker.ReplyOption) *slacker.ReplyDefaults {
+	config := &slacker.ReplyDefaults{
+		Attachments: []slack.Attachment{},
+		Blocks:      []slack.Block{},
+	}
+
+	for _, option := range options {
+		option(config)
+	}
+	return config
 }
 
 func (r *fakeResponse) RTM() *slack.RTM {
@@ -81,4 +97,8 @@ func (r *fakeResponse) GetMessages() []string {
 
 func (r *fakeResponse) GetErrors() []string {
 	return r.errors
+}
+
+func (r *fakeResponse) GetBlocks() []slack.Block {
+	return r.blocks
 }
