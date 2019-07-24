@@ -17,7 +17,7 @@ func init() {
 		log.Fatal("Bot User OAuth Access Token not found. Set PONG_TOKEN to continue.")
 	}
 
-	Client = slacker.NewClient(token, slacker.WithDebug(true))
+	Client = slacker.NewClient(token, slacker.WithDebug(os.Getenv("DEBUG") == "True"))
 }
 
 // Listen enables the Client in listen mode
