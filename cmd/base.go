@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/evandroflores/pong/model"
 	"github.com/evandroflores/pong/slack"
+	ns "github.com/nlopes/slack"
 	"github.com/shomali11/slacker"
 	log "github.com/sirupsen/logrus"
 )
@@ -71,4 +73,23 @@ func getMatchPlayers(teamID, channelID, winnerID, loserID string) (winner, loser
 	}
 
 	return winner, loser, nil
+}
+
+func versusMessageBlock(winner, loser *model.Player) []ns.Block {
+	vs := ns.NewTextBlockObject(ns.MarkdownType, " x ", false, false)
+
+	elements := []ns.MixedElement{}
+	elements = append(elements, winner.GetBlockCard()...)
+	elements = append(elements, vs)
+	elements = append(elements, loser.GetBlockCard()...)
+	ctx := toContext(fmt.Sprintf("%s_%s", winner.IDStr(), loser.IDStr()), elements...)
+
+	c, _ := json.Marshal(ctx)
+	fmt.Println(string(c))
+
+	return ctx
+}
+
+func toContext(id string, elements ...ns.MixedElement) []ns.Block {
+	return []ns.Block{ns.NewContextBlock(id, elements...)}
 }

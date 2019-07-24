@@ -27,5 +27,5 @@ func someone(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	response.Reply("", slacker.WithBlocks(user.GetBlockCard()))
+	response.Reply("", slacker.WithBlocks(toContext(user.IDStr(), user.GetBlockCard()...)))
 }

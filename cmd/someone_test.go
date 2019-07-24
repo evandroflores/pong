@@ -81,6 +81,9 @@ func TestShowValidUser(t *testing.T) {
 	assert.Len(t, contextBlock.ContextElements.Elements, 2)
 	potentialImage := contextBlock.ContextElements.Elements[0]
 	assert.Equal(t, slack.MixedElementImage, potentialImage.MixedElementType())
+	assert.Equal(t, player.Image, potentialImage.(*slack.ImageBlockElement).ImageURL)
+	assert.Equal(t, player.Name, potentialImage.(*slack.ImageBlockElement).AltText)
+
 	potentialText := contextBlock.ContextElements.Elements[1]
 	assert.Equal(t, slack.MixedElementText, potentialText.MixedElementType())
 	assert.Equal(t, fmt.Sprintf("*%s* (%04.f pts) *#%02d*", player.Name, 1000.00, 1),

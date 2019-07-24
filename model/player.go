@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/evandroflores/pong/database"
@@ -29,6 +28,11 @@ type Player struct {
 // ToStr returns a string representation of Player
 func (player *Player) ToStr() string {
 	return fmt.Sprintf("TeamID: %s ChannelID: %s SlackID: %s", player.TeamID, player.ChannelID, player.SlackID)
+}
+
+// IDStr returns a simplified representation of Player IDs
+func (player *Player) IDStr() string {
+	return fmt.Sprintf("%s.%s.%s", player.TeamID, player.ChannelID, player.SlackID)
 }
 
 // GetPlayer returns a player given TeamID+ChannelID+SlackID
@@ -130,20 +134,16 @@ func GetAllPlayers(teamID, channelID string) []Player {
 	return results
 }
 
-func (player *Player) GetBlockCardWithText(extra string) []ns.Block {
+func (player *Player) GetBlockCardWithText(extra string) []ns.MixedElement {
 	if extra == "" {
 		extra = fmt.Sprintf("(%04.f pts) *#%02d*", player.Points, player.GetPosition())
 	}
 	avatar := ns.NewImageBlockElement(player.Image, player.Name)
 	text := ns.NewTextBlockObject(ns.MarkdownType, fmt.Sprintf("*%s* %s", player.Name, extra), false, false)
 
-	context := []ns.Block{}
-	context = append(context, ns.NewContextBlock(string(player.ID), avatar, text))
-	c, _ := json.Marshal(context)
-	fmt.Println(string(c))
-	return context
+	return []ns.MixedElement{avatar, text}
 }
 
-func (player *Player) GetBlockCard() []ns.Block {
+func (player *Player) GetBlockCard() []ns.MixedElement {
 	return player.GetBlockCardWithText("")
 }
