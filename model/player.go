@@ -134,16 +134,16 @@ func GetAllPlayers(teamID, channelID string) []Player {
 	return results
 }
 
+// GetBlockCardWithText formats the Player Image and Name on a Slack Block Kit
 func (player *Player) GetBlockCardWithText(extra string) []ns.MixedElement {
-	if extra == "" {
-		extra = fmt.Sprintf("(%04.f pts) *#%02d*", player.Points, player.GetPosition())
-	}
 	avatar := ns.NewImageBlockElement(player.Image, player.Name)
 	text := ns.NewTextBlockObject(ns.MarkdownType, fmt.Sprintf("*%s* %s", player.Name, extra), false, false)
 
 	return []ns.MixedElement{avatar, text}
 }
 
+// GetBlockCard calls GetBlockCardWithText using a default text
 func (player *Player) GetBlockCard() []ns.MixedElement {
-	return player.GetBlockCardWithText("")
+	return player.GetBlockCardWithText(
+		fmt.Sprintf("(%04.f pts) *#%02d*", player.Points, player.GetPosition()))
 }
