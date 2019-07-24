@@ -53,7 +53,7 @@ func (s *RankTestSuite) TearDownSuite() {
 }
 
 func (s *RankTestSuite) TestMakeEmptyRank() {
-	expected := "No rank for this channel"
+	expected := fmt.Sprintf("No rank for channel <#%s>\n\n", s.rankChannelID)
 	actual := makeRank(s.rankChannelID, []model.Player{})
 	s.Equal(expected, actual)
 }
@@ -68,11 +68,12 @@ func (s *RankTestSuite) TestEmptyRankForChannel() {
 
 	evt := makeTestEvent()
 	evt.Msg.Channel = s.noRankChannelID
+	expected := fmt.Sprintf("No rank for channel <#%s>\n\n", s.noRankChannelID)
 	request := &fakeRequest{event: evt, properties: props}
 	response := &fakeResponse{}
 
 	rank(request, response)
-	s.Contains(response.GetMessages(), "No rank for this channel")
+	s.Contains(response.GetMessages(), expected)
 	s.Len(response.GetMessages(), 1)
 	s.Empty(response.GetErrors())
 }
@@ -95,11 +96,12 @@ func (s *RankTestSuite) TestEmptyTop() {
 
 	evt := makeTestEvent()
 	evt.Msg.Channel = s.noRankChannelID
+	expected := fmt.Sprintf("No rank for channel <#%s>\n\n", s.noRankChannelID)
 	request := &fakeRequest{event: evt, properties: props}
 	response := &fakeResponse{}
 
 	top(request, response)
-	s.Contains(response.GetMessages(), "No rank for this channel")
+	s.Contains(response.GetMessages(), expected)
 	s.Len(response.GetMessages(), 1)
 	s.Empty(response.GetErrors())
 }
