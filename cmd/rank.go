@@ -35,7 +35,7 @@ func top(request slacker.Request, response slacker.ResponseWriter) {
 func makeRank(uncleanChannelID string, players []model.Player) string {
 	var message bytes.Buffer
 	if len(players) == 0 {
-		return "No rank for this channel"
+		return fmt.Sprintf("No rank for channel <#%s>\n\n", uncleanChannelID)
 	}
 	message.WriteString(fmt.Sprintf("\n*Rank for * <#%s>\n\n", uncleanChannelID))
 	for position, player := range players {

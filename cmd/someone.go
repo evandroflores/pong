@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/evandroflores/pong/model"
 	"github.com/shomali11/slacker"
 )
@@ -29,6 +27,5 @@ func someone(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	response.Reply(fmt.Sprintf("*%s* has %0.f points (#%02d)",
-		user.Name, user.Points, user.GetPosition()))
+	response.Reply("", slacker.WithBlocks(toContext(user.IDStr(), user.GetBlockCard()...)))
 }

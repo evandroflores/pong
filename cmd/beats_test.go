@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/evandroflores/pong/elo"
 	"github.com/nlopes/slack"
 
 	"github.com/evandroflores/pong/database"
+	"github.com/evandroflores/pong/elo"
 	"github.com/evandroflores/pong/model"
 	"github.com/shomali11/proper"
 	"github.com/shomali11/slacker"
@@ -81,10 +81,36 @@ func (s *BeatsTestSuite) TestExpectedEloResult() {
 
 	s.cmd(request, response)
 
-	s.Contains(response.GetMessages(),
-		fmt.Sprintf("*%s* %04.f pts (#%02d) vs *%s* %04.f pts (#%02d)",
-			s.winner.Name, eloWinnerPts, 1, s.loser.Name, eloLoserPts, 2))
+	blocks := response.GetBlocks()
 
-	s.Len(response.GetMessages(), 1)
+	s.Len(response.GetBlocks(), 1)
+	s.Equal(slack.MBTContext, blocks[0].BlockType())
+	contextBlock := blocks[0].(*slack.ContextBlock)
+
+	elements := contextBlock.ContextElements.Elements
+	s.Len(elements, 5)
+
+	s.Equal(slack.MixedElementImage, elements[0].MixedElementType())
+	s.Equal(s.winner.Image, elements[0].(*slack.ImageBlockElement).ImageURL)
+	s.Equal(s.winner.Name, elements[0].(*slack.ImageBlockElement).AltText)
+
+	s.Equal(slack.MixedElementText, elements[1].MixedElementType())
+	s.Equal(fmt.Sprintf("*%s* (%04.f pts) *#%02d*",
+		s.winner.Name, eloWinnerPts, 1),
+		elements[1].(*slack.TextBlockObject).Text)
+
+	s.Equal(slack.MixedElementText, elements[2].MixedElementType())
+	s.Equal(" x ", elements[2].(*slack.TextBlockObject).Text)
+
+	s.Equal(slack.MixedElementImage, elements[3].MixedElementType())
+	s.Equal(s.loser.Image, elements[3].(*slack.ImageBlockElement).ImageURL)
+	s.Equal(s.loser.Name, elements[3].(*slack.ImageBlockElement).AltText)
+
+	s.Equal(slack.MixedElementText, elements[4].MixedElementType())
+	s.Equal(fmt.Sprintf("*%s* (%04.f pts) *#%02d*",
+		s.loser.Name, eloLoserPts, 2),
+		elements[4].(*slack.TextBlockObject).Text)
+
 	s.Empty(response.GetErrors())
+
 }
