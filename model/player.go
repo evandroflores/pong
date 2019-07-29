@@ -47,7 +47,7 @@ func GetPlayer(teamID, channelID, slackID string) (Player, error) {
 
 // Add adds a new player.
 func (player *Player) Add() {
-	player.ingestData()
+	player.IngestData()
 	database.Connection.Create(&player)
 }
 
@@ -78,7 +78,7 @@ func (player *Player) Update() error {
 		return fmt.Errorf("player not found - %s", player.ToStr())
 	}
 
-	dbPlayer.ingestData()
+	dbPlayer.IngestData()
 	dbPlayer.Points = player.Points
 
 	database.Connection.Save(&dbPlayer)
@@ -86,7 +86,8 @@ func (player *Player) Update() error {
 	return nil
 }
 
-func (player *Player) ingestData() {
+// IngestData calls Slack API to get Users data
+func (player *Player) IngestData() {
 	slackUser, err := slack.Client.GetUserInfo(player.SlackID)
 	if err != nil {
 		log.Errorf("Something bad happen while ingesting User data from Slack - %s", err.Error())

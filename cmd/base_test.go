@@ -3,10 +3,12 @@ package cmd
 import (
 	"fmt"
 	"math/rand"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/bouk/monkey"
 	"github.com/evandroflores/pong/model"
 	sl "github.com/evandroflores/pong/slack"
 	"github.com/nlopes/slack"
@@ -38,12 +40,19 @@ func makeTestPlayer() model.Player {
 	name := fmt.Sprintf("Fake User - %08d", randomInt)
 	slackID := fmt.Sprintf("U%08d", randomInt)
 
-	return model.Player{
+	mockIngest := func(player *model.Player) {
+		fmt.Printf("Ingesting called for %s\n", player.ToStr())
+	}
+	player := model.Player{
 		TeamID:    "TTTTTTTTT",
 		ChannelID: "CCCCCCCCC",
 		SlackID:   slackID,
 		Name:      name,
+		Image:     "https://www.thispersondoesnotexist.com/image",
 	}
+	monkey.PatchInstanceMethod(reflect.TypeOf(&player), "IngestData", mockIngest)
+
+	return player
 }
 
 func TestCleanID(t *testing.T) {
