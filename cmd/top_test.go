@@ -6,6 +6,7 @@ import (
 
 	"github.com/evandroflores/pong/database"
 	"github.com/evandroflores/pong/model"
+	"github.com/nlopes/slack"
 	"github.com/shomali11/proper"
 	"github.com/stretchr/testify/suite"
 )
@@ -14,19 +15,14 @@ type TopTestSuite struct {
 	suite.Suite
 	rankChannelID   string
 	noRankChannelID string
-	top20rank       string
-	top10rank       string
-	top5rank        string
+	rankHeader      string
 	players         []model.Player
 }
 
 func (s *TopTestSuite) SetupSuite() {
 	s.rankChannelID = "CCCCCCCCC"
 	s.noRankChannelID = "CAAAAAAAA"
-	rankHeader := fmt.Sprintf("\n*Rank for * <#%s>\n\n", s.rankChannelID)
-	s.top20rank = rankHeader
-	s.top10rank = rankHeader
-	s.top5rank = rankHeader
+	s.rankHeader = fmt.Sprintf("*Rank for * <#%s>", s.rankChannelID)
 
 	s.players = []model.Player{}
 	for i := 1; i <= 20; i++ {
@@ -35,13 +31,6 @@ func (s *TopTestSuite) SetupSuite() {
 		s.players = append(s.players, player)
 
 		database.Connection.Create(&player)
-		s.top20rank += fmt.Sprintf("*%02d* - %04.f - %s\n", i, player.Points, player.Name)
-		if i <= 10 {
-			s.top10rank += fmt.Sprintf("*%02d* - %04.f - %s\n", i, player.Points, player.Name)
-		}
-		if i <= 5 {
-			s.top5rank += fmt.Sprintf("*%02d* - %04.f - %s\n", i, player.Points, player.Name)
-		}
 	}
 }
 
@@ -57,13 +46,15 @@ func (s *TopTestSuite) TestEmptyTop() {
 
 	evt := makeTestEvent()
 	evt.Msg.Channel = s.noRankChannelID
-	expected := fmt.Sprintf("No rank for channel <#%s>\n\n", s.noRankChannelID)
+	expected := fmt.Sprintf("No rank for channel <#%s>", s.noRankChannelID)
 	request := &fakeRequest{event: evt, properties: props}
 	response := &fakeResponse{}
 
 	top(request, response)
 	s.Contains(response.GetMessages(), expected)
+	fmt.Println(response.GetMessages())
 	s.Len(response.GetMessages(), 1)
+	s.Len(response.GetBlocks(), 0)
 	s.Empty(response.GetErrors())
 }
 
@@ -74,9 +65,32 @@ func (s *TopTestSuite) TestTop10WithoutSendingParam() {
 	response := &fakeResponse{}
 
 	top(request, response)
-	s.Len(response.GetMessages(), 1)
+	s.Equal(response.GetMessages(), []string{""})
+	blocks := response.GetBlocks()
+	s.Len(blocks, 11)
 	s.Empty(response.GetErrors())
-	s.Equal(s.top10rank, response.GetMessages()[0])
+
+	headerBlock := blocks[0].(*slack.ContextBlock).ContextElements.Elements[0]
+
+	s.Equal(s.rankHeader, headerBlock.(*slack.TextBlockObject).Text)
+
+	// s.Equal(slack.MixedElementText, elements[0].MixedElementType())
+	// s.Equal(fmt.Sprintf("*#%02d*", 1), elements[0].(*slack.TextBlockObject).Text)
+	for pos := 1; pos <= 10; pos++ {
+		elements := blocks[pos].(*slack.ContextBlock).ContextElements.Elements
+		player := s.players[pos-1]
+
+		s.Equal(slack.MixedElementText, elements[0].MixedElementType())
+		s.Equal(fmt.Sprintf("*%02d* - %04.f", pos, player.Points),
+			elements[0].(*slack.TextBlockObject).Text)
+
+		s.Equal(slack.MixedElementImage, elements[1].MixedElementType())
+		s.Equal(player.Image, elements[1].(*slack.ImageBlockElement).ImageURL)
+		s.Equal(player.Name, elements[1].(*slack.ImageBlockElement).AltText)
+
+		s.Equal(slack.MixedElementText, elements[2].MixedElementType())
+		s.Equal(fmt.Sprintf("*%s*", player.Name), elements[2].(*slack.TextBlockObject).Text)
+	}
 }
 
 func (s *TopTestSuite) TestTop10() {
@@ -88,9 +102,10 @@ func (s *TopTestSuite) TestTop10() {
 	response := &fakeResponse{}
 
 	top(request, response)
-	s.Len(response.GetMessages(), 1)
+	s.Equal(response.GetMessages(), []string{""})
+	blocks := response.GetBlocks()
+	s.Len(blocks, 11)
 	s.Empty(response.GetErrors())
-	s.Equal(s.top10rank, response.GetMessages()[0])
 }
 
 func (s *TopTestSuite) TestTop5ToGuaranteeIsNotFollowingDefault() {
@@ -102,9 +117,10 @@ func (s *TopTestSuite) TestTop5ToGuaranteeIsNotFollowingDefault() {
 	response := &fakeResponse{}
 
 	top(request, response)
-	s.Len(response.GetMessages(), 1)
+	s.Equal(response.GetMessages(), []string{""})
+	blocks := response.GetBlocks()
+	s.Len(blocks, 6)
 	s.Empty(response.GetErrors())
-	s.Equal(s.top5rank, response.GetMessages()[0])
 }
 
 func TestTopTestSuite(t *testing.T) {
