@@ -58,6 +58,25 @@ func (s *TopTestSuite) TestEmptyTop() {
 	s.Empty(response.GetErrors())
 }
 
+func (s *TopTestSuite) TestMoreThanTop20() {
+	var props = proper.NewProperties(
+		map[string]string{
+			"limit": "40",
+		})
+
+	evt := makeTestEvent()
+	expected := "Top is limited to 20 players"
+	request := &fakeRequest{event: evt, properties: props}
+	response := &fakeResponse{}
+
+	top(request, response)
+	s.Contains(response.GetMessages(), expected)
+	fmt.Println(response.GetMessages())
+	s.Len(response.GetMessages(), 1)
+	s.Len(response.GetBlocks(), 0)
+	s.Empty(response.GetErrors())
+}
+
 func (s *TopTestSuite) TestTop10WithoutSendingParam() {
 	var props = proper.NewProperties(
 		map[string]string{})
@@ -74,8 +93,6 @@ func (s *TopTestSuite) TestTop10WithoutSendingParam() {
 
 	s.Equal(s.rankHeader, headerBlock.(*slack.TextBlockObject).Text)
 
-	// s.Equal(slack.MixedElementText, elements[0].MixedElementType())
-	// s.Equal(fmt.Sprintf("*#%02d*", 1), elements[0].(*slack.TextBlockObject).Text)
 	for pos := 1; pos <= 10; pos++ {
 		elements := blocks[pos].(*slack.ContextBlock).ContextElements.Elements
 		player := s.players[pos-1]
