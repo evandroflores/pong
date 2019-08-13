@@ -75,8 +75,12 @@ func getMatchPlayers(teamID, channelID, winnerID, loserID string) (winner, loser
 	return winner, loser, nil
 }
 
+func toContext(id string, elements ...ns.MixedElement) []ns.Block {
+	return []ns.Block{ns.NewContextBlock(id, elements...)}
+}
+
 func versusMessageBlock(winner, loser *model.Player) []ns.Block {
-	vs := ns.NewTextBlockObject(ns.MarkdownType, " x ", false, false)
+	vs := ns.NewTextBlockObject(ns.MarkdownType, " X ", false, false)
 
 	elements := []ns.MixedElement{}
 	elements = append(elements, winner.GetBlockCard()...)
@@ -90,6 +94,21 @@ func versusMessageBlock(winner, loser *model.Player) []ns.Block {
 	return ctx
 }
 
-func toContext(id string, elements ...ns.MixedElement) []ns.Block {
-	return []ns.Block{ns.NewContextBlock(id, elements...)}
+func listMessageBlock(header string, players []model.Player) []ns.Block {
+	blocks := []ns.Block{}
+
+	if header != "" {
+		header := toContext(".", ns.NewTextBlockObject(ns.MarkdownType, header, false, false))
+		blocks = append(blocks, header...)
+	}
+
+	for pos, player := range players {
+		blocks = append(blocks, toContext(player.IDStr(),
+			player.GetBlockCardWithText(fmt.Sprintf("*%02d* - %04.f", pos+1, player.Points), "")...)...)
+	}
+	c, _ := json.Marshal(blocks)
+	fmt.Println(string(c))
+
+	return blocks
+
 }
