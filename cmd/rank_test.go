@@ -14,19 +14,14 @@ type RankTestSuite struct {
 	suite.Suite
 	rankChannelID   string
 	noRankChannelID string
-	top20rank       string
-	top10rank       string
-	top5rank        string
+	expectedRank    string
 	players         []model.Player
 }
 
 func (s *RankTestSuite) SetupSuite() {
 	s.rankChannelID = "CCCCCCCCC"
 	s.noRankChannelID = "CAAAAAAAA"
-	rankHeader := fmt.Sprintf("\n*Rank for * <#%s>\n\n", s.rankChannelID)
-	s.top20rank = rankHeader
-	s.top10rank = rankHeader
-	s.top5rank = rankHeader
+	s.expectedRank = fmt.Sprintf("\n*Rank for * <#%s>\n\n", s.rankChannelID)
 
 	s.players = []model.Player{}
 	for i := 1; i <= 20; i++ {
@@ -35,13 +30,7 @@ func (s *RankTestSuite) SetupSuite() {
 		s.players = append(s.players, player)
 
 		database.Connection.Create(&player)
-		s.top20rank += fmt.Sprintf("*%02d* - %04.f - %s\n", i, player.Points, player.Name)
-		if i <= 10 {
-			s.top10rank += fmt.Sprintf("*%02d* - %04.f - %s\n", i, player.Points, player.Name)
-		}
-		if i <= 5 {
-			s.top5rank += fmt.Sprintf("*%02d* - %04.f - %s\n", i, player.Points, player.Name)
-		}
+		s.expectedRank += fmt.Sprintf("*%02d* - %04.f - %s\n", i, player.Points, player.Name)
 	}
 }
 
@@ -60,7 +49,7 @@ func (s *RankTestSuite) TestMakeEmptyRank() {
 
 func (s *RankTestSuite) TestMakeRank() {
 	actual := makeRank(s.rankChannelID, s.players)
-	s.Equal(s.top20rank, actual)
+	s.Equal(s.expectedRank, actual)
 }
 
 func (s *RankTestSuite) TestEmptyRankForChannel() {
@@ -87,63 +76,7 @@ func (s *RankTestSuite) TestRankForChannel() {
 	rank(request, response)
 	s.Len(response.GetMessages(), 1)
 	s.Empty(response.GetErrors())
-	s.Equal(s.top20rank, response.GetMessages()[0])
-}
-
-// Top Tests *********************************************************************************
-func (s *RankTestSuite) TestEmptyTop() {
-	var props = proper.NewProperties(map[string]string{})
-
-	evt := makeTestEvent()
-	evt.Msg.Channel = s.noRankChannelID
-	expected := fmt.Sprintf("No rank for channel <#%s>\n\n", s.noRankChannelID)
-	request := &fakeRequest{event: evt, properties: props}
-	response := &fakeResponse{}
-
-	top(request, response)
-	s.Contains(response.GetMessages(), expected)
-	s.Len(response.GetMessages(), 1)
-	s.Empty(response.GetErrors())
-}
-
-func (s *RankTestSuite) TestTop10WithoutSendingParam() {
-	var props = proper.NewProperties(
-		map[string]string{})
-	request := &fakeRequest{event: makeTestEvent(), properties: props}
-	response := &fakeResponse{}
-
-	top(request, response)
-	s.Len(response.GetMessages(), 1)
-	s.Empty(response.GetErrors())
-	s.Equal(s.top10rank, response.GetMessages()[0])
-}
-
-func (s *RankTestSuite) TestTop10() {
-	var props = proper.NewProperties(
-		map[string]string{
-			"limit": "10",
-		})
-	request := &fakeRequest{event: makeTestEvent(), properties: props}
-	response := &fakeResponse{}
-
-	top(request, response)
-	s.Len(response.GetMessages(), 1)
-	s.Empty(response.GetErrors())
-	s.Equal(s.top10rank, response.GetMessages()[0])
-}
-
-func (s *RankTestSuite) TestTop5ToGuaranteeIsNotFollowingDefault() {
-	var props = proper.NewProperties(
-		map[string]string{
-			"limit": "5",
-		})
-	request := &fakeRequest{event: makeTestEvent(), properties: props}
-	response := &fakeResponse{}
-
-	top(request, response)
-	s.Len(response.GetMessages(), 1)
-	s.Empty(response.GetErrors())
-	s.Equal(s.top5rank, response.GetMessages()[0])
+	s.Equal(s.expectedRank, response.GetMessages()[0])
 }
 
 func TestRankTestSuite(t *testing.T) {

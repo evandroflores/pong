@@ -9,19 +9,25 @@ import (
 )
 
 func init() {
-	Register("rank", "Show the entire rank.", rank)
+	Register("top <limit>", "Show the top N players (default 10, limit 20).", top)
 }
 
-func rank(request slacker.Request, response slacker.ResponseWriter) {
+func top(request slacker.Request, response slacker.ResponseWriter) {
 	response.Typing()
 
 	teamID := cleanID(request.Event().Team)
 	channelID := cleanID(request.Event().Channel)
+	limit := request.IntegerParam("limit", 10)
 
-	response.Reply(makeRank(request.Event().Channel, model.GetAllPlayers(teamID, channelID)))
+	if limit > 40 {
+		response.Reply("Top is limited to 20 players")
+		return
+	}
+
+	response.Reply(makeTop(request.Event().Channel, model.GetPlayers(teamID, channelID, limit)))
 }
 
-func makeRank(uncleanChannelID string, players []model.Player) string {
+func makeTop(uncleanChannelID string, players []model.Player) string {
 	var message bytes.Buffer
 	if len(players) == 0 {
 		return fmt.Sprintf("No rank for channel <#%s>\n\n", uncleanChannelID)
