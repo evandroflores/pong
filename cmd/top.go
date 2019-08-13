@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 
 	"github.com/evandroflores/pong/model"
@@ -19,23 +18,18 @@ func top(request slacker.Request, response slacker.ResponseWriter) {
 	channelID := cleanID(request.Event().Channel)
 	limit := request.IntegerParam("limit", 10)
 
-	if limit > 40 {
+	if limit > 20 {
 		response.Reply("Top is limited to 20 players")
 		return
 	}
 
-	response.Reply(makeTop(request.Event().Channel, model.GetPlayers(teamID, channelID, limit)))
-}
-
-func makeTop(uncleanChannelID string, players []model.Player) string {
-	var message bytes.Buffer
+	players := model.GetPlayers(teamID, channelID, limit)
 	if len(players) == 0 {
-		return fmt.Sprintf("No rank for channel <#%s>\n\n", uncleanChannelID)
+		response.Reply(fmt.Sprintf("No rank for channel <#%s>", channelID))
+		return
 	}
-	message.WriteString(fmt.Sprintf("\n*Rank for * <#%s>\n\n", uncleanChannelID))
-	for position, player := range players {
-		message.WriteString(fmt.Sprintf("*%02d* - %04.f - %s\n", position+1, player.Points, player.Name))
-	}
+	header := fmt.Sprintf("*Rank for * <#%s>", channelID)
 
-	return message.String()
+	response.Reply("", slacker.WithBlocks(listMessageBlock(header, players)))
+
 }
