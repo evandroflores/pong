@@ -136,15 +136,30 @@ func GetAllPlayers(teamID, channelID string) []Player {
 }
 
 // GetBlockCardWithText formats the Player Image and Name on a Slack Block Kit
-func (player *Player) GetBlockCardWithText(extra string) []ns.MixedElement {
-	avatar := ns.NewImageBlockElement(player.Image, player.Name)
-	text := ns.NewTextBlockObject(ns.MarkdownType, fmt.Sprintf("*%s* %s", player.Name, extra), false, false)
+func (player *Player) GetBlockCardWithText(before, after string) []ns.MixedElement {
+	elements := []ns.MixedElement{}
 
-	return []ns.MixedElement{avatar, text}
+	if before != "" {
+		beforeTextBlock := ns.NewTextBlockObject(ns.MarkdownType, before, false, false)
+		elements = append(elements, beforeTextBlock)
+	}
+	avatar := ns.NewImageBlockElement(player.Image, player.Name)
+	elements = append(elements, avatar)
+
+	name := ns.NewTextBlockObject(ns.MarkdownType, fmt.Sprintf("*%s*", player.Name), false, false)
+	elements = append(elements, name)
+
+	if after != "" {
+		afterTextBlock := ns.NewTextBlockObject(ns.MarkdownType, after, false, false)
+		elements = append(elements, afterTextBlock)
+	}
+
+	return elements
 }
 
 // GetBlockCard calls GetBlockCardWithText using a default text
 func (player *Player) GetBlockCard() []ns.MixedElement {
 	return player.GetBlockCardWithText(
-		fmt.Sprintf("(%04.f pts) *#%02d*", player.Points, player.GetPosition()))
+		fmt.Sprintf("*#%02d*", player.GetPosition()),
+		fmt.Sprintf("(%04.f pts)", player.Points))
 }
