@@ -88,28 +88,36 @@ func (s *BeatsTestSuite) TestExpectedEloResult() {
 	contextBlock := blocks[0].(*slack.ContextBlock)
 
 	elements := contextBlock.ContextElements.Elements
-	s.Len(elements, 5)
+	s.Len(elements, 9)
 
-	s.Equal(slack.MixedElementImage, elements[0].MixedElementType())
-	s.Equal(s.winner.Image, elements[0].(*slack.ImageBlockElement).ImageURL)
-	s.Equal(s.winner.Name, elements[0].(*slack.ImageBlockElement).AltText)
+	s.Equal(slack.MixedElementText, elements[0].MixedElementType())
+	s.Equal(fmt.Sprintf("*#%02d*", 1), elements[0].(*slack.TextBlockObject).Text)
 
-	s.Equal(slack.MixedElementText, elements[1].MixedElementType())
-	s.Equal(fmt.Sprintf("*%s* (%04.f pts) *#%02d*",
-		s.winner.Name, eloWinnerPts, 1),
-		elements[1].(*slack.TextBlockObject).Text)
+	s.Equal(slack.MixedElementImage, elements[1].MixedElementType())
+	s.Equal(s.winner.Image, elements[1].(*slack.ImageBlockElement).ImageURL)
+	s.Equal(s.winner.Name, elements[1].(*slack.ImageBlockElement).AltText)
 
 	s.Equal(slack.MixedElementText, elements[2].MixedElementType())
-	s.Equal(" x ", elements[2].(*slack.TextBlockObject).Text)
+	s.Equal(fmt.Sprintf("*%s*", s.winner.Name), elements[2].(*slack.TextBlockObject).Text)
 
-	s.Equal(slack.MixedElementImage, elements[3].MixedElementType())
-	s.Equal(s.loser.Image, elements[3].(*slack.ImageBlockElement).ImageURL)
-	s.Equal(s.loser.Name, elements[3].(*slack.ImageBlockElement).AltText)
+	s.Equal(slack.MixedElementText, elements[3].MixedElementType())
+	s.Equal(fmt.Sprintf("(%04.f pts)", eloWinnerPts), elements[3].(*slack.TextBlockObject).Text)
 
 	s.Equal(slack.MixedElementText, elements[4].MixedElementType())
-	s.Equal(fmt.Sprintf("*%s* (%04.f pts) *#%02d*",
-		s.loser.Name, eloLoserPts, 2),
-		elements[4].(*slack.TextBlockObject).Text)
+	s.Equal(" X ", elements[4].(*slack.TextBlockObject).Text)
+
+	s.Equal(slack.MixedElementText, elements[5].MixedElementType())
+	s.Equal(fmt.Sprintf("*#%02d*", 2), elements[5].(*slack.TextBlockObject).Text)
+
+	s.Equal(slack.MixedElementImage, elements[6].MixedElementType())
+	s.Equal(s.loser.Image, elements[6].(*slack.ImageBlockElement).ImageURL)
+	s.Equal(s.loser.Name, elements[6].(*slack.ImageBlockElement).AltText)
+
+	s.Equal(slack.MixedElementText, elements[2].MixedElementType())
+	s.Equal(fmt.Sprintf("*%s*", s.loser.Name), elements[7].(*slack.TextBlockObject).Text)
+
+	s.Equal(slack.MixedElementText, elements[8].MixedElementType())
+	s.Equal(fmt.Sprintf("(%04.f pts)", eloLoserPts), elements[8].(*slack.TextBlockObject).Text)
 
 	s.Empty(response.GetErrors())
 
