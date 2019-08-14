@@ -78,16 +78,21 @@ func TestShowValidUser(t *testing.T) {
 	assert.Len(t, response.GetBlocks(), 1)
 	assert.Equal(t, slack.MBTContext, blocks[0].BlockType())
 	contextBlock := blocks[0].(*slack.ContextBlock)
-	assert.Len(t, contextBlock.ContextElements.Elements, 2)
-	potentialImage := contextBlock.ContextElements.Elements[0]
-	assert.Equal(t, slack.MixedElementImage, potentialImage.MixedElementType())
-	assert.Equal(t, player.Image, potentialImage.(*slack.ImageBlockElement).ImageURL)
-	assert.Equal(t, player.Name, potentialImage.(*slack.ImageBlockElement).AltText)
+	elements := contextBlock.ContextElements.Elements
+	assert.Len(t, elements, 4)
 
-	potentialText := contextBlock.ContextElements.Elements[1]
-	assert.Equal(t, slack.MixedElementText, potentialText.MixedElementType())
-	assert.Equal(t, fmt.Sprintf("*%s* (%04.f pts) *#%02d*", player.Name, 1000.00, 1),
-		potentialText.(*slack.TextBlockObject).Text)
+	assert.Equal(t, slack.MixedElementText, elements[0].MixedElementType())
+	assert.Equal(t, fmt.Sprintf("*#%02d*", player.GetPosition()), elements[0].(*slack.TextBlockObject).Text)
+
+	assert.Equal(t, slack.MixedElementImage, elements[1].MixedElementType())
+	assert.Equal(t, player.Image, elements[1].(*slack.ImageBlockElement).ImageURL)
+	assert.Equal(t, player.Name, elements[1].(*slack.ImageBlockElement).AltText)
+
+	assert.Equal(t, slack.MixedElementText, elements[2].MixedElementType())
+	assert.Equal(t, fmt.Sprintf("*%s*", player.Name), elements[2].(*slack.TextBlockObject).Text)
+
+	assert.Equal(t, slack.MixedElementText, elements[3].MixedElementType())
+	assert.Equal(t, fmt.Sprintf("(%04.f pts)", player.Points), elements[3].(*slack.TextBlockObject).Text)
 
 	assert.Empty(t, response.GetErrors())
 }
