@@ -151,3 +151,11 @@ func TestForeverAlone(t *testing.T) {
 		assert.Len(t, response.GetErrors(), 1)
 	}
 }
+
+func TestTrend(t *testing.T) {
+	assert.Equal(t, getPosDiff(0), "")
+	assert.Equal(t, getPosDiff(1), " ↑ 1 ")
+	assert.Equal(t, getPosDiff(-1), " ↓ 1 ")
+	assert.Equal(t, getPosDiff(5), " ↑ 5 ")
+	assert.Equal(t, getPosDiff(-5), " ↓ 5 ")
+}
