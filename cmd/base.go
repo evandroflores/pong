@@ -83,7 +83,7 @@ func versusMessageBlock(winner *model.Player, winnerDiffPos int, loser *model.Pl
 
 	elements := []ns.MixedElement{}
 	elements = append(elements, winner.GetBlockCard()...)
-	variation := fmt.Sprintf("%s X %s", getDiffTrendBlock(winnerDiffPos), getDiffTrendBlock(loserDiffPos))
+	variation := fmt.Sprintf("%s X %s", getPosDiff(winnerDiffPos), getPosDiff(loserDiffPos))
 	elements = append(elements, ns.NewTextBlockObject(ns.MarkdownType, variation, false, false))
 
 	elements = append(elements, loser.GetBlockCard()...)
@@ -95,7 +95,7 @@ func versusMessageBlock(winner *model.Player, winnerDiffPos int, loser *model.Pl
 	return ctx
 }
 
-func getDiffTrendBlock(diff int) string {
+func getPosDiff(diff int) string {
 	trend := ""
 	if diff > 0 {
 		trend = fmt.Sprintf(" ↑ %d ", diff)
