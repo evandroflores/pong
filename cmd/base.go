@@ -79,12 +79,13 @@ func toContext(id string, elements ...ns.MixedElement) []ns.Block {
 	return []ns.Block{ns.NewContextBlock(id, elements...)}
 }
 
-func versusMessageBlock(winner, loser *model.Player) []ns.Block {
-	vs := ns.NewTextBlockObject(ns.MarkdownType, " X ", false, false)
+func versusMessageBlock(winner *model.Player, winnerDiffPos int, loser *model.Player, loserDiffPos int) []ns.Block {
 
 	elements := []ns.MixedElement{}
 	elements = append(elements, winner.GetBlockCard()...)
-	elements = append(elements, vs)
+	variation := fmt.Sprintf("%s X %s", getDiffTrendBlock(winnerDiffPos), getDiffTrendBlock(loserDiffPos))
+	elements = append(elements, ns.NewTextBlockObject(ns.MarkdownType, variation, false, false))
+
 	elements = append(elements, loser.GetBlockCard()...)
 	ctx := toContext(fmt.Sprintf("%s_%s", winner.IDStr(), loser.IDStr()), elements...)
 
@@ -92,6 +93,18 @@ func versusMessageBlock(winner, loser *model.Player) []ns.Block {
 	fmt.Println(string(c))
 
 	return ctx
+}
+
+func getDiffTrendBlock(diff int) string {
+	trend := ""
+	if diff > 0 {
+		trend = fmt.Sprintf(" ↑ %d ", diff)
+	}
+	if diff < 0 {
+		trend = fmt.Sprintf(" ↓ %d ", -(diff))
+	}
+
+	return trend
 }
 
 func listMessageBlock(header string, players []model.Player) []ns.Block {

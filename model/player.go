@@ -67,23 +67,24 @@ func GetOrCreatePlayer(teamID, channelID, slackID string) (Player, error) {
 }
 
 // Update a given player
-func (player *Player) Update() error {
+func (player *Player) Update() (int, error) {
 	dbPlayer, err := GetPlayer(player.TeamID, player.ChannelID, player.SlackID)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	if dbPlayer == (Player{}) {
-		return fmt.Errorf("player not found - %s", player.ToStr())
+		return 0, fmt.Errorf("player not found - %s", player.ToStr())
 	}
 
+	previousPosition := dbPlayer.GetPosition()
 	dbPlayer.IngestData()
 	dbPlayer.Points = player.Points
 
 	database.Connection.Save(&dbPlayer)
 
-	return nil
+	return (previousPosition - dbPlayer.GetPosition()), nil
 }
 
 // IngestData calls Slack API to get Users data

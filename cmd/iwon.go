@@ -27,8 +27,8 @@ func iWon(request slacker.Request, response slacker.ResponseWriter) {
 	}
 
 	winner.Points, loser.Points = elo.Calc(winner.Points, loser.Points)
-	_ = winner.Update()
-	_ = loser.Update()
+	winnerDiffPos, _ := winner.Update()
+	loserDiffPos, _ := loser.Update()
 
-	response.Reply("", slacker.WithBlocks(versusMessageBlock(&winner, &loser)))
+	response.Reply("", slacker.WithBlocks(versusMessageBlock(&winner, winnerDiffPos, &loser, loserDiffPos)))
 }
