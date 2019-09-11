@@ -25,9 +25,10 @@ func simulate(request slacker.Request, response slacker.ResponseWriter) {
 		response.ReportError(err)
 		return
 	}
-	simulateA, simulateB := elo.Calc(playerA.Points, playerB.Points)
+
+	simulateA, simulateB, _ := elo.Calc(playerA.Points, playerB.Points)
 	response.Reply(fmt.Sprintf("*%s* wins (%04.f pts) vs *%s* (%04.f pts)", playerA.Name, simulateA, playerB.Name, simulateB))
 
-	simulateB, simulateA = elo.Calc(playerB.Points, playerA.Points)
+	simulateB, simulateA, _ = elo.Calc(playerB.Points, playerA.Points)
 	response.Reply(fmt.Sprintf("*%s* wins (%04.f pts) vs *%s* (%04.f pts)", playerB.Name, simulateB, playerA.Name, simulateA))
 }

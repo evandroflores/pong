@@ -24,9 +24,10 @@ func beats(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	winner.Points, loser.Points = elo.Calc(winner.Points, loser.Points)
+	var eloPts float64
+	winner.Points, loser.Points, eloPts = elo.Calc(winner.Points, loser.Points)
 	winnerDiffPos, _ := winner.Update()
 	loserDiffPos, _ := loser.Update()
 
-	response.Reply("", slacker.WithBlocks(versusMessageBlock(&winner, winnerDiffPos, &loser, loserDiffPos)))
+	response.Reply("", slacker.WithBlocks(versusMessageBlock(&winner, winnerDiffPos, &loser, loserDiffPos, eloPts)))
 }

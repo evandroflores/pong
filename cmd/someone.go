@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/evandroflores/pong/model"
+	ns "github.com/nlopes/slack"
 	"github.com/shomali11/slacker"
 )
 
@@ -27,5 +28,5 @@ func someone(request slacker.Request, response slacker.ResponseWriter) {
 		return
 	}
 
-	response.Reply("", slacker.WithBlocks(toContext(user.IDStr(), user.GetBlockCard()...)))
+	response.Reply("", slacker.WithBlocks([]ns.Block{ns.NewContextBlock(user.IDStr(), user.GetBlockCard()...)}))
 }
