@@ -75,11 +75,7 @@ func getMatchPlayers(teamID, channelID, winnerID, loserID string) (winner, loser
 	return winner, loser, nil
 }
 
-func toContext(id string, elements ...ns.MixedElement) []ns.Block {
-	return []ns.Block{ns.NewContextBlock(id, elements...)}
-}
-
-func versusMessageBlock(winner *model.Player, winnerDiffPos int, loser *model.Player, loserDiffPos int) []ns.Block {
+func versusMessageBlock(winner *model.Player, winnerDiffPos int, loser *model.Player, loserDiffPos int, eloPts float64) []ns.Block {
 
 	elements := []ns.MixedElement{}
 	elements = append(elements, winner.GetBlockCard()...)
@@ -87,12 +83,19 @@ func versusMessageBlock(winner *model.Player, winnerDiffPos int, loser *model.Pl
 	elements = append(elements, ns.NewTextBlockObject(ns.MarkdownType, variation, false, false))
 
 	elements = append(elements, loser.GetBlockCard()...)
-	ctx := toContext(fmt.Sprintf("%s_%s", winner.IDStr(), loser.IDStr()), elements...)
 
-	c, _ := json.Marshal(ctx)
+	exchanged := fmt.Sprintf("_This match exchanged *%02.f* pts_", eloPts)
+	exchangedPoints := ns.NewTextBlockObject(ns.MarkdownType, exchanged, false, false)
+
+	blocks := []ns.Block{
+		ns.NewContextBlock(fmt.Sprintf("%s_%s", winner.IDStr(), loser.IDStr()), elements...),
+		ns.NewContextBlock("exchangedPoints", exchangedPoints),
+	}
+
+	c, _ := json.Marshal(blocks)
 	fmt.Println(string(c))
 
-	return ctx
+	return blocks
 }
 
 func getPosDiff(diff int) string {
@@ -111,13 +114,13 @@ func listMessageBlock(header string, players []model.Player) []ns.Block {
 	blocks := []ns.Block{}
 
 	if header != "" {
-		header := toContext(".", ns.NewTextBlockObject(ns.MarkdownType, header, false, false))
-		blocks = append(blocks, header...)
+		header := ns.NewContextBlock("header", ns.NewTextBlockObject(ns.MarkdownType, header, false, false))
+		blocks = append(blocks, header)
 	}
 
 	for pos, player := range players {
-		blocks = append(blocks, toContext(player.IDStr(),
-			player.GetBlockCardWithText(fmt.Sprintf("*%02d* - %04.f", pos+1, player.Points), "")...)...)
+		blocks = append(blocks, ns.NewContextBlock(player.IDStr(),
+			player.GetBlockCardWithText(fmt.Sprintf("*%02d* - %04.f", pos+1, player.Points), "")...))
 	}
 	c, _ := json.Marshal(blocks)
 	fmt.Println(string(c))
