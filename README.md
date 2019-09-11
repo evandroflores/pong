@@ -7,5 +7,3 @@
 [![License: BSD-3](https://img.shields.io/badge/License-BSD3-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ---
-
-

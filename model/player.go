@@ -99,6 +99,7 @@ func (player *Player) IngestData() {
 	player.TeamID = slackUser.TeamID
 }
 
+// GetPosition returns the current position for the given player
 func (player *Player) GetPosition() int {
 	count := 0
 
