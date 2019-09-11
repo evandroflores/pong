@@ -77,13 +77,13 @@ func (s *BeatsTestSuite) TestExpectedEloResult() {
 	request := &fakeRequest{event: s.evt, properties: props}
 	response := &fakeResponse{}
 
-	eloWinnerPts, eloLoserPts := elo.Calc(s.originalWinnerPoints, s.originalLoserPoints)
+	eloWinnerPts, eloLoserPts, eloPts := elo.Calc(s.originalWinnerPoints, s.originalLoserPoints)
 
 	s.cmd(request, response)
 
 	blocks := response.GetBlocks()
 
-	s.Len(response.GetBlocks(), 1)
+	s.Len(response.GetBlocks(), 2)
 	s.Equal(slack.MBTContext, blocks[0].BlockType())
 	contextBlock := blocks[0].(*slack.ContextBlock)
 
@@ -118,6 +118,12 @@ func (s *BeatsTestSuite) TestExpectedEloResult() {
 
 	s.Equal(slack.MixedElementText, elements[8].MixedElementType())
 	s.Equal(fmt.Sprintf("(%04.f pts)", eloLoserPts), elements[8].(*slack.TextBlockObject).Text)
+
+	s.Equal(slack.MBTContext, blocks[1].BlockType())
+	exchangedPointsBlock := blocks[1].(*slack.ContextBlock)
+	exchangedPointsElements := exchangedPointsBlock.ContextElements.Elements
+	s.Equal(slack.MixedElementText, exchangedPointsElements[0].MixedElementType())
+	s.Equal(fmt.Sprintf("_This match exchanged *%02.f* pts_", eloPts), exchangedPointsElements[0].(*slack.TextBlockObject).Text)
 
 	s.Empty(response.GetErrors())
 

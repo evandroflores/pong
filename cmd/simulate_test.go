@@ -81,8 +81,8 @@ func (s *SimulateTestSuite) TestExpectedEloResult() {
 	request := &fakeRequest{event: makeTestEvent(), properties: props}
 	response := &fakeResponse{}
 
-	eloAWin, eloBLose := elo.Calc(s.originalPlayerAPoints, s.originalPlayerBPoints)
-	eloBWin, eloALose := elo.Calc(s.originalPlayerBPoints, s.originalPlayerAPoints)
+	eloAWin, eloBLose, _ := elo.Calc(s.originalPlayerAPoints, s.originalPlayerBPoints)
+	eloBWin, eloALose, _ := elo.Calc(s.originalPlayerBPoints, s.originalPlayerAPoints)
 
 	simulate(request, response)
 
