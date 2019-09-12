@@ -18,6 +18,10 @@ func beats(request slacker.Request, response slacker.ResponseWriter) {
 	winnerID := cleanID(request.StringParam("@winner", ""))
 	loserID := cleanID(request.StringParam("@loser", ""))
 
+	handleMatch(response, teamID, channelID, winnerID, loserID)
+}
+
+func handleMatch(response slacker.ResponseWriter, teamID, channelID, winnerID, loserID string) {
 	winner, loser, err := getMatchPlayers(teamID, channelID, winnerID, loserID)
 	if err != nil {
 		response.ReportError(err)
