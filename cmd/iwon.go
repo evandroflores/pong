@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/evandroflores/pong/elo"
 	"github.com/shomali11/slacker"
 )
 
@@ -20,16 +19,5 @@ func iWon(request slacker.Request, response slacker.ResponseWriter) {
 	winnerID := cleanID(request.Event().User)
 	loserID := cleanID(request.StringParam("@loser", ""))
 
-	winner, loser, err := getMatchPlayers(teamID, channelID, winnerID, loserID)
-	if err != nil {
-		response.ReportError(err)
-		return
-	}
-
-	var eloPts float64
-	winner.Points, loser.Points, eloPts = elo.Calc(winner.Points, loser.Points)
-	winnerDiffPos, _ := winner.Update()
-	loserDiffPos, _ := loser.Update()
-
-	response.Reply("", slacker.WithBlocks(versusMessageBlock(&winner, winnerDiffPos, &loser, loserDiffPos, eloPts)))
+	handleMatch(response, teamID, channelID, winnerID, loserID)
 }
