@@ -29,7 +29,7 @@ func syncDisabled(request slacker.Request, response slacker.ResponseWriter) {
 		if slackUser.Deleted {
 			player.Delete()
 			message.WriteString(fmt.Sprintf("*%s* - Removed\n", player.Name))
-			removed += 1
+			removed++
 		}
 	}
 	if removed == 0 {
