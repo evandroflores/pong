@@ -87,6 +87,11 @@ func (player *Player) Update() (int, error) {
 	return (previousPosition - dbPlayer.GetPosition()), nil
 }
 
+// Delete removes locally the user from the DB.
+func (player *Player) Delete() {
+	database.Connection.Delete(&player)
+}
+
 // IngestData calls Slack API to get Users data
 func (player *Player) IngestData() {
 	slackUser, err := slack.Client.GetUserInfo(player.SlackID)

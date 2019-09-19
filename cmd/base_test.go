@@ -3,16 +3,20 @@ package cmd
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/bouk/monkey"
+	"bou.ke/monkey"
 	"github.com/evandroflores/pong/model"
 	sl "github.com/evandroflores/pong/slack"
 	"github.com/nlopes/slack"
 	"github.com/shomali11/proper"
+	"github.com/shomali11/slacker"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,11 +31,15 @@ func init() {
 }
 
 func makeTestEvent() *slack.MessageEvent {
+	return makeTestEventWith(teamID, channelID, userID)
+}
+
+func makeTestEventWith(teamID, channelID, slackID string) *slack.MessageEvent {
 	return &slack.MessageEvent{
 		Msg: slack.Msg{
-			Team:    "TTTTTTTTT",
-			Channel: "CCCCCCCCC",
-			User:    "UUUUUUUUU",
+			Team:    teamID,
+			Channel: channelID,
+			User:    slackID,
 		}}
 }
 
@@ -40,12 +48,16 @@ func makeTestPlayer() model.Player {
 	name := fmt.Sprintf("Fake User - %08d", randomInt)
 	slackID := fmt.Sprintf("U%08d", randomInt)
 
+	return makeTestPlayerWith(teamID, channelID, slackID, name)
+}
+
+func makeTestPlayerWith(teamID, channelID, slackID, name string) model.Player {
 	mockIngest := func(player *model.Player) {
 		fmt.Printf("Ingesting called for %s\n", player.ToStr())
 	}
 	player := model.Player{
-		TeamID:    "TTTTTTTTT",
-		ChannelID: "CCCCCCCCC",
+		TeamID:    teamID,
+		ChannelID: channelID,
 		SlackID:   slackID,
 		Name:      name,
 		Image:     "https://www.thispersondoesnotexist.com/image",
@@ -88,6 +100,32 @@ func TestSayWhat(t *testing.T) {
 	assert.Contains(t, response.GetMessages(), "I have no idea what you mean by _Testing_")
 	assert.Len(t, response.GetMessages(), 1)
 	assert.Empty(t, response.GetErrors())
+}
+
+func TestLoadCommands(t *testing.T) {
+
+	expectedMsg := fmt.Sprintf("[%d] commands loaded", len(sl.Client.BotCommands()))
+
+	called := false
+	mockDefaultCommand := func(s *slacker.Slacker, handler func(slacker.Request, slacker.ResponseWriter)) {
+		fmt.Printf("DefaultCommand called")
+		assert.Equal(t, runtime.FuncForPC(reflect.ValueOf(sayWhat).Pointer()).Name(),
+			runtime.FuncForPC(reflect.ValueOf(handler).Pointer()).Name())
+		called = true
+	}
+
+	monkey.PatchInstanceMethod(reflect.TypeOf(sl.Client), "DefaultCommand", mockDefaultCommand)
+
+	mockLogInfof := func(format string, args ...interface{}) {
+		assert.Equal(t, expectedMsg, fmt.Sprintf(format, args))
+	}
+
+	patchLog := monkey.Patch(log.Infof, mockLogInfof)
+
+	LoadCommands()
+
+	assert.True(t, called)
+	patchLog.Unpatch()
 }
 
 func TestInvalidWinner(t *testing.T) {
@@ -158,4 +196,28 @@ func TestTrend(t *testing.T) {
 	assert.Equal(t, getPosDiff(-1), " ↓ 1 ")
 	assert.Equal(t, getPosDiff(5), " ↑ 5 ")
 	assert.Equal(t, getPosDiff(-5), " ↓ 5 ")
+}
+
+func TestIsAdmin(t *testing.T) {
+	props := proper.NewProperties(map[string]string{})
+	evt := makeTestEvent()
+
+	currentAdminEnv := os.Getenv("PONG_ADMINS")
+	os.Setenv("PONG_ADMINS", evt.User)
+	defer func() { os.Setenv("PONG_ADMINS", currentAdminEnv) }()
+
+	request := &fakeRequest{event: evt, properties: props}
+	assert.True(t, isAdmin(request))
+}
+
+func TestNotAdmin(t *testing.T) {
+	props := proper.NewProperties(map[string]string{})
+	evt := makeTestEvent()
+
+	currentAdminEnv := os.Getenv("PONG_ADMINS")
+	os.Setenv("PONG_ADMINS", "")
+	defer func() { os.Setenv("PONG_ADMINS", currentAdminEnv) }()
+
+	request := &fakeRequest{event: evt, properties: props}
+	assert.False(t, isAdmin(request))
 }

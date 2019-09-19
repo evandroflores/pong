@@ -20,7 +20,7 @@ type TopTestSuite struct {
 }
 
 func (s *TopTestSuite) SetupSuite() {
-	s.rankChannelID = "CCCCCCCCC"
+	s.rankChannelID = "C12345678"
 	s.noRankChannelID = "CAAAAAAAA"
 	s.rankHeader = fmt.Sprintf("*Rank for * <#%s>", s.rankChannelID)
 
