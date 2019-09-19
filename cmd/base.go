@@ -23,6 +23,7 @@ func Register(usage, description string, handler func(request slacker.Request, r
 	slack.Client.Command(usage, &slacker.CommandDefinition{Description: description, Handler: handler})
 }
 
+// RegisterAdmin adds a command using an Admin authorization function
 func RegisterAdmin(usage, description string, handler func(request slacker.Request, response slacker.ResponseWriter)) {
 	log.Infof("Registering Admin %s - %s", usage, description)
 	slack.Client.Command(usage, &slacker.CommandDefinition{Description: description, Handler: handler, AuthorizationFunc: isAdmin})

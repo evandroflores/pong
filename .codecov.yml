@@ -7,5 +7,5 @@ coverage:
     patch:
       default:
         target: 50%
-ignore:
-  - mock_response_writer.go
+  ignore:
+    - "**/mock*.go"
