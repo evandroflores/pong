@@ -44,12 +44,16 @@ func makeTestPlayer() model.Player {
 	name := fmt.Sprintf("Fake User - %08d", randomInt)
 	slackID := fmt.Sprintf("U%08d", randomInt)
 
+	return makeTestPlayerWith("TTTTTTTTT", "CCCCCCCCC", slackID, name)
+}
+
+func makeTestPlayerWith(teamID, channelID, slackID, name string) model.Player {
 	mockIngest := func(player *model.Player) {
 		fmt.Printf("Ingesting called for %s\n", player.ToStr())
 	}
 	player := model.Player{
-		TeamID:    "TTTTTTTTT",
-		ChannelID: "CCCCCCCCC",
+		TeamID:    teamID,
+		ChannelID: channelID,
 		SlackID:   slackID,
 		Name:      name,
 		Image:     "https://www.thispersondoesnotexist.com/image",
