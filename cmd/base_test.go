@@ -31,11 +31,15 @@ func init() {
 }
 
 func makeTestEvent() *slack.MessageEvent {
+	return makeTestEventWith(teamID, channelID, userID)
+}
+
+func makeTestEventWith(teamID, channelID, slackID string) *slack.MessageEvent {
 	return &slack.MessageEvent{
 		Msg: slack.Msg{
-			Team:    "TTTTTTTTT",
-			Channel: "CCCCCCCCC",
-			User:    "UUUUUUUUU",
+			Team:    teamID,
+			Channel: channelID,
+			User:    slackID,
 		}}
 }
 
@@ -44,7 +48,7 @@ func makeTestPlayer() model.Player {
 	name := fmt.Sprintf("Fake User - %08d", randomInt)
 	slackID := fmt.Sprintf("U%08d", randomInt)
 
-	return makeTestPlayerWith("TTTTTTTTT", "CCCCCCCCC", slackID, name)
+	return makeTestPlayerWith(teamID, channelID, slackID, name)
 }
 
 func makeTestPlayerWith(teamID, channelID, slackID, name string) model.Player {
