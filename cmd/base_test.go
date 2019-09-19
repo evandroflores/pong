@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -14,6 +15,8 @@ import (
 	sl "github.com/evandroflores/pong/slack"
 	"github.com/nlopes/slack"
 	"github.com/shomali11/proper"
+	"github.com/shomali11/slacker"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -89,6 +92,32 @@ func TestSayWhat(t *testing.T) {
 	assert.Contains(t, response.GetMessages(), "I have no idea what you mean by _Testing_")
 	assert.Len(t, response.GetMessages(), 1)
 	assert.Empty(t, response.GetErrors())
+}
+
+func TestLoadCommands(t *testing.T) {
+
+	expectedMsg := fmt.Sprintf("[%d] commands loaded", len(sl.Client.BotCommands()))
+
+	called := false
+	mockDefaultCommand := func(s *slacker.Slacker, handler func(slacker.Request, slacker.ResponseWriter)) {
+		fmt.Printf("DefaultCommand called")
+		assert.Equal(t, runtime.FuncForPC(reflect.ValueOf(sayWhat).Pointer()).Name(),
+			runtime.FuncForPC(reflect.ValueOf(handler).Pointer()).Name())
+		called = true
+	}
+
+	monkey.PatchInstanceMethod(reflect.TypeOf(sl.Client), "DefaultCommand", mockDefaultCommand)
+
+	mockLogInfof := func(format string, args ...interface{}) {
+		assert.Equal(t, expectedMsg, fmt.Sprintf(format, args))
+	}
+
+	patchLog := monkey.Patch(log.Infof, mockLogInfof)
+
+	LoadCommands()
+
+	assert.True(t, called)
+	patchLog.Unpatch()
 }
 
 func TestInvalidWinner(t *testing.T) {
