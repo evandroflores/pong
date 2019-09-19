@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bouk/monkey"
+	"bou.ke/monkey"
 	"github.com/evandroflores/pong/model"
 	sl "github.com/evandroflores/pong/slack"
 	"github.com/nlopes/slack"

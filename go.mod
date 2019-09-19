@@ -3,7 +3,7 @@ module github.com/evandroflores/pong
 go 1.12
 
 require (
-	bou.ke/monkey v1.0.1 // indirect
+	bou.ke/monkey v1.0.1
 	github.com/bouk/monkey v1.0.1
 	github.com/jinzhu/gorm v1.9.10
 	github.com/nlopes/slack v0.5.1-0.20190605211732-a05dfd3f167d
