@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
@@ -158,4 +159,28 @@ func TestTrend(t *testing.T) {
 	assert.Equal(t, getPosDiff(-1), " ↓ 1 ")
 	assert.Equal(t, getPosDiff(5), " ↑ 5 ")
 	assert.Equal(t, getPosDiff(-5), " ↓ 5 ")
+}
+
+func TestIsAdmin(t *testing.T) {
+	props := proper.NewProperties(map[string]string{})
+	evt := makeTestEvent()
+
+	currentAdminEnv := os.Getenv("PONG_ADMINS")
+	os.Setenv("PONG_ADMINS", evt.User)
+	defer func() { os.Setenv("PONG_ADMINS", currentAdminEnv) }()
+
+	request := &fakeRequest{event: evt, properties: props}
+	assert.True(t, isAdmin(request))
+}
+
+func TestNotAdmin(t *testing.T) {
+	props := proper.NewProperties(map[string]string{})
+	evt := makeTestEvent()
+
+	currentAdminEnv := os.Getenv("PONG_ADMINS")
+	os.Setenv("PONG_ADMINS", "")
+	defer func() { os.Setenv("PONG_ADMINS", currentAdminEnv) }()
+
+	request := &fakeRequest{event: evt, properties: props}
+	assert.False(t, isAdmin(request))
 }
