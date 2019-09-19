@@ -19,7 +19,7 @@ type RankTestSuite struct {
 }
 
 func (s *RankTestSuite) SetupSuite() {
-	s.rankChannelID = "CCCCCCCCC"
+	s.rankChannelID = "C12345678"
 	s.noRankChannelID = "CAAAAAAAA"
 	s.expectedRank = fmt.Sprintf("\n*Rank for * <#%s>\n\n", s.rankChannelID)
 
